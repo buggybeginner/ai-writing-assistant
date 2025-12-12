@@ -1,0 +1,421 @@
+/* Basic styles */ 
+/* .stApp { background-color: #f5f7fa; }  */
+/* ===== MODERN THEME VARIABLES ===== */
+:root {
+    --primary-color: #4f46e5;
+    --primary-dark: #4338ca;
+    --secondary-color: #0ea5e9;
+    --accent-color: #f59e0b;
+    --success-color: #10b981;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+}
+
+/* ===== BASE STYLES ===== */
+.stApp {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ===== TYPOGRAPHY ENHANCEMENTS ===== */
+h1, h2, h3 {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* ===== CARD COMPONENTS ===== */
+.feature-card {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+}
+
+/* ===== PERSONALITY CARDS ===== */
+.personality-card {
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin: 0.75rem 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.personality-card:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(90deg, #f8fafc, #ffffff);
+    transform: translateX(4px);
+}
+
+.personality-card.selected {
+    border-color: var(--primary-color);
+    background: linear-gradient(90deg, #eff6ff, #ffffff);
+    box-shadow: var(--shadow-md);
+}
+
+.personality-icon {
+    font-size: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    border-radius: var(--radius-md);
+}
+/* ===== SIDEBAR ENHANCEMENTS ===== */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+}
+
+/* ADD THESE LINES TO FIX SIDEBAR TEXT COLOR */
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* Specifically target navigation items */
+section[data-testid="stSidebar"] div,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] a,
+section[data-testid="stSidebar"] label {
+    color: white !important;
+}
+
+/* Target Streamlit's specific sidebar elements */
+section[data-testid="stSidebar"] .stRadio,
+section[data-testid="stSidebar"] .stSelectbox,
+section[data-testid="stSidebar"] .stTextInput,
+section[data-testid="stSidebar"] .stButton {
+    color: white !important;
+}
+
+/* For the navigation/page names specifically */
+section[data-testid="stSidebar"] .st-emotion-cache-16txtl3,
+section[data-testid="stSidebar"] .st-emotion-cache-1oe5ca3 {
+    color: white !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label {
+    color: white !important;
+}
+
+section[data-testid="stSidebar"] h1, 
+section[data-testid="stSidebar"] h2, 
+section[data-testid="stSidebar"] h3 {
+    color: white !important;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+}
+
+/* ===== BUTTON ENHANCEMENTS ===== */
+.stButton > button {
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(90deg, var(--primary-dark), #3730a3);
+}
+
+.stButton > button:active {
+    transform: translateY(0);
+}
+
+/* Primary action button */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.stButton > button[kind="primary"]:hover {
+    background: linear-gradient(90deg, #d97706, #b45309);
+}
+
+/* ===== GENERATED OUTPUT STYLING ===== */
+.generated-output {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--secondary-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.generated-output::before {
+    content: '✨';
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    font-size: 1.5rem;
+}
+
+/* ===== SIDEBAR ENHANCEMENTS ===== */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+}
+
+section[data-testid="stSidebar"] .stRadio label {
+    color: white !important;
+}
+
+section[data-testid="stSidebar"] h1, 
+section[data-testid="stSidebar"] h2, 
+section[data-testid="stSidebar"] h3 {
+    color: white !important;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+}
+
+/* ===== PROGRESS & METRIC CARDS ===== */
+.stProgress > div > div > div {
+    background: linear-gradient(90deg, var(--success-color), #34d399);
+}
+
+.element-container .stMetric {
+    background: var(--card-background);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ===== FILE UPLOADER ===== */
+.stFileUploader > div > div {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--card-background);
+    transition: all 0.3s ease;
+}
+
+.stFileUploader > div > div:hover {
+    border-color: var(--primary-color);
+    background: #f8fafc;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .stApp {
+        padding: 0.5rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .feature-card, .personality-card {
+        padding: 1rem;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.loading-pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--primary-dark), #0284c7);
+}
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    /* Stack columns on mobile */
+    .st-emotion-cache-1v0mbdj {
+        flex-direction: column !important;
+    }
+    
+    /* Adjust font sizes */
+    h1 { font-size: 2rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.25rem !important; }
+    
+    /* Compact cards */
+    .feature-card, .personality-card {
+        padding: 1rem !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    /* Hide sidebar on mobile (optional) */
+    section[data-testid="stSidebar"] {
+        min-width: 0px !important;
+        width: 100% !important;
+    }
+    
+    /* Better button sizing */
+    .stButton > button {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Adjust text areas */
+    .stTextArea textarea {
+        height: 120px !important;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .st-emotion-cache-1v0mbdj {
+        gap: 1rem !important;
+    }
+    
+    .feature-card {
+        padding: 1.25rem !important;
+    }
+}
+
+/* ==================== MOBILE RESPONSIVENESS ==================== */
+
+/* Mobile screens (phones) */
+@media screen and (max-width: 768px) {
+    /* Stack columns vertically */
+    .st-emotion-cache-1v0mbdj, .row-widget.stHorizontalBlock {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    /* Adjust font sizes */
+    h1 { font-size: 1.8rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.2rem !important; }
+    
+    /* Compact cards and containers */
+    .feature-card, .personality-card, .generated-output {
+        padding: 1rem !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    /* Adjust sidebar for mobile */
+    section[data-testid="stSidebar"] {
+        min-width: 100% !important;
+        width: 100% !important;
+    }
+    
+    /* Make buttons full width */
+    .stButton > button {
+        width: 100% !important;
+        margin: 0.25rem 0 !important;
+    }
+    
+    /* Adjust text areas */
+    .stTextArea textarea {
+        height: 100px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Compact metrics */
+    .stMetric {
+        padding: 0.5rem !important;
+    }
+    
+    /* Hide less important elements on mobile */
+    .mobile-hide {
+        display: none !important;
+    }
+}
+
+/* Tablet screens */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .st-emotion-cache-1v0mbdj {
+        gap: 1.5rem !important;
+    }
+    
+    .feature-card {
+        padding: 1.25rem !important;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .stButton > button, .stRadio label, .stCheckbox label {
+        padding: 0.75rem !important;
+        min-height: 44px !important; /* Apple's minimum touch target */
+    }
+    
+    /* Space out interactive elements */
+    .personality-card {
+        margin: 1rem 0 !important;
+        padding: 1.25rem !important;
+    }
+}
