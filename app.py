@@ -45,7 +45,6 @@ def show_sidebar():
         st.markdown("""
         <div style="text-align: center; padding: 1rem 0;">
             <h1 style="font-size: 1.8rem; margin: 0;">🎭 PersonaWrite AI</h1>
-            <p style="color: #64748b; margin: 0;">Final Year Project</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -91,7 +90,6 @@ def main():
     st.markdown("""
     <div style="text-align: center; color: #64748b; font-size: 0.9rem; padding: 1rem;">
         🎭 <strong>PersonaWrite AI</strong><br>
-        Frontend: Complete | Backend: Pending
     </div>
     """, unsafe_allow_html=True)
 
