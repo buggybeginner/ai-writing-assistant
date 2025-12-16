@@ -1,27 +1,27 @@
-<<<<<<< HEAD
-# .gitignore for PersonaWrite AI Project
-
-# Virtual Environment
-venv/
-env/
-ENV/
-
-# Python cache and bytecode
-=======
+# ===============================
 # Python
->>>>>>> 145e8cd0329813c890e61d13c31c53033aabaa50
+# ===============================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-<<<<<<< HEAD
 
-# Distribution / packaging
-.Python
+# ===============================
+# Virtual Environments
+# ===============================
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ===============================
+# Distribution / Packaging
+# ===============================
 build/
-develop-eggs/
 dist/
+develop-eggs/
 downloads/
 eggs/
 .eggs/
@@ -35,15 +35,22 @@ wheels/
 .installed.cfg
 *.egg
 
+# ===============================
 # PyInstaller
+# ===============================
 *.manifest
 *.spec
 
-# Installer logs
+# ===============================
+# Logs
+# ===============================
+*.log
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# ===============================
+# Unit Tests / Coverage
+# ===============================
 htmlcov/
 .tox/
 .coverage
@@ -54,25 +61,22 @@ coverage.xml
 *.cover
 .hypothesis/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# ===============================
+# Jupyter
+# ===============================
+.ipynb_checkpoints/
 
-# IDE files
+# ===============================
+# IDEs / Editors
+# ===============================
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS generated files
-=======
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# System
->>>>>>> 145e8cd0329813c890e61d13c31c53033aabaa50
+# ===============================
+# OS Files
+# ===============================
 .DS_Store
 .DS_Store?
 ._*
@@ -81,33 +85,25 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 
-<<<<<<< HEAD
-# Streamlit secrets
+# ===============================
+# Streamlit
+# ===============================
 .streamlit/secrets.toml
 
-# User data (don't commit personal/user data)
-data/user_profiles/*
-!data/user_profiles/.gitkeep
-
-# Logs
-*.log
-app_test.py
-=======
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-
-# Environment variables
+# ===============================
+# Environment Variables
+# ===============================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-venv/
-__pycache__/
->>>>>>> 145e8cd0329813c890e61d13c31c53033aabaa50
+
+# ===============================
+# Project Specific
+# ===============================
+app_test.py
+
+# User-generated data (keep structure, ignore contents)
+data/user_profiles/*
+!data/user_profiles/.gitkeep

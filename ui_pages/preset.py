@@ -6,7 +6,8 @@ def show():
     st.markdown("""
     <div style="text-align: center; margin-bottom: 2rem;">
         <h1 style="font-size: 2.5rem;">🎭 Preset Personalities</h1>
-        <p style="color: #64748b;">Choose from carefully crafted writing styles</p>
+        <p style="color: #64748b;">Choose from carefully
+                 crafted writing styles</p>
     </div>
     """, unsafe_allow_html=True)
 
