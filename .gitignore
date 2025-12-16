@@ -76,3 +76,4 @@ data/user_profiles/*
 
 # Logs
 *.log
+app_test.py

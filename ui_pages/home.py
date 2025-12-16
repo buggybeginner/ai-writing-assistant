@@ -36,11 +36,12 @@ def show():
         col_a, col_b = st.columns(2)
         with col_a:
             if st.button("🚀 Start with Presets", use_container_width=True):
-                st.session_state.page = "preset"
+                st.session_state.pending_nav = "Preset Personalities"
                 st.rerun()
+
         with col_b:
             if st.button("📁 Upload My Style", use_container_width=True):
-                st.session_state.page = "personal"
+                st.session_state.pending_nav = "Personal Style"
                 st.rerun()
     
     with col2:
