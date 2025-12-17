@@ -24,22 +24,42 @@ def show():
         "casual": {
             "name": "Casual Friendly",
             "icon": "😊",
-            "desc": "Warm and conversational tone."
+            "desc": "Warm and conversational tone.",
+            "profile": {
+                "avg_sentence_length": 10,
+                "formality_score": 0.2,
+                "vocabulary_richness": 0.4
+            }
         },
         "corporate": {
             "name": "Corporate Professional",
             "icon": "💼",
-            "desc": "Formal business communication."
+            "desc": "Formal business communication.",
+            "profile": {
+                "avg_sentence_length": 16,
+                "formality_score": 0.7,
+                "vocabulary_richness": 0.6
+            }
         },
         "academic": {
             "name": "Formal Academic",
             "icon": "🎓",
-            "desc": "Scholarly academic writing."
+            "desc": "Scholarly academic writing.",
+            "profile": {
+                "avg_sentence_length": 22,
+                "formality_score": 0.9,
+                "vocabulary_richness": 0.8
+            }
         },
         "motivational": {
             "name": "Motivational Speaker",
             "icon": "🚀",
-            "desc": "Energetic and inspiring tone."
+            "desc": "Energetic and inspiring tone.",
+            "profile": {
+                "avg_sentence_length": 14,
+                "formality_score": 0.4,
+                "vocabulary_richness": 0.7
+            }
         }
     }
 
@@ -56,14 +76,16 @@ def show():
             key="selected_style"
         )
 
-        st.markdown(f"### {PERSONALITIES[selected_style]['icon']} {PERSONALITIES[selected_style]['name']}")
+        st.markdown(
+            f"### {PERSONALITIES[selected_style]['icon']} {PERSONALITIES[selected_style]['name']}"
+        )
         st.write(PERSONALITIES[selected_style]["desc"])
 
     # ================= RIGHT =================
     with col2:
         st.subheader("✍️ Write with Your Style")
 
-        # -------- QUICK PROMPTS (CORRECT WAY) --------
+        # -------- QUICK PROMPTS --------
         st.markdown("💡 **Quick Prompts**")
 
         prompt_cols = st.columns(2)
@@ -79,7 +101,7 @@ def show():
                 if st.button(prompt, key=f"prompt_{i}"):
                     st.session_state.prompt_text = prompt
 
-        # -------- TEXT AREA (STATE-DRIVEN) --------
+        # -------- TEXT AREA --------
         st.text_area(
             "What would you like to write about?",
             key="prompt_text",
@@ -97,9 +119,8 @@ def show():
                     time.sleep(0.8)
                     st.session_state.generated_text = generate_with_style(
                         st.session_state.prompt_text,
-                        PERSONALITIES[selected_style]["name"]
+                        PERSONALITIES[selected_style]["profile"]  # ✅ FIX
                     )
-
 
         # -------- OUTPUT --------
         if st.session_state.generated_text:
