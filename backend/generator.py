@@ -1,16 +1,28 @@
 import random
 
+# ===================== PRESET GENERATION =====================
+def generate_preset(prompt: str, preset: str) -> str:
+    preset_prompts = {
+        "casual": "Write in a casual and friendly tone.",
+        "formal": "Write in a formal and professional tone.",
+        "academic": "Write in an academic and scholarly style."
+    }
+
+    instruction = preset_prompts.get(preset, "")
+    
+    return f"{instruction}\n\n{prompt}"
+
+
+# ===================== PERSONAL STYLE GENERATION =====================
 def generate_with_style(prompt: str, style_profile: dict) -> str:
     """
     Intent-aware + style-aware text generation
     """
 
     prompt_lower = prompt.lower()
-
-    avg_len = style_profile.get("avg_sentence_length", 12)
     formality = style_profile.get("formality_score", 0)
 
-    # ---------------- INTENT DETECTION ----------------
+    # ---------- INTENT DETECTION ----------
     if "social media" in prompt_lower or "post" in prompt_lower:
         intent = "social"
     elif "email" in prompt_lower:
@@ -22,40 +34,35 @@ def generate_with_style(prompt: str, style_profile: dict) -> str:
     else:
         intent = "general"
 
-    # ---------------- TEMPLATES ----------------
+    # ---------- TEMPLATES ----------
     templates = {
         "social": [
-            "🚀 Big news! We're excited to launch something we've been working hard on. Stay tuned!",
-            "✨ The wait is over! Our new product is finally here — check it out today!"
+            "🚀 Big news! We're excited to launch something we've been working hard on.",
+            "✨ The wait is over! Our new product is finally here."
         ],
         "email": [
-            "I hope this message finds you well. I am writing to discuss an important matter.",
-            "Thank you for taking the time to review this email. I look forward to your response."
+            "I hope this message finds you well. Thank you for your support.",
+            "I truly appreciate your guidance and assistance."
         ],
         "academic": [
-            "This paper presents a comprehensive analysis of the proposed methodology.",
-            "The results demonstrate the effectiveness of the approach under various conditions."
+            "This paper presents a detailed analysis of the proposed methodology.",
+            "The results demonstrate the effectiveness of the approach."
         ],
         "motivation": [
-            "Believe in yourself and keep pushing forward — success is closer than you think!",
-            "Every challenge is an opportunity to grow. Let’s give it our best!"
+            "Believe in yourself and keep pushing forward.",
+            "Every challenge is an opportunity to grow."
         ],
         "general": [
             "Thank you for your time and consideration.",
-            "I appreciate your support and effort."
+            "I appreciate your effort and support."
         ]
     }
 
-    selected_templates = templates[intent]
-
     body = " ".join(
-        random.sample(
-            selected_templates,
-            min(2, len(selected_templates))
-        )
+        random.sample(templates[intent], min(2, len(templates[intent])))
     )
 
-    # ---------------- STYLE TONE ----------------
+    # ---------- STYLE TONE ----------
     if formality > 0.6:
         opening = "Dear Sir/Madam,"
         closing = "Sincerely,"
@@ -63,10 +70,19 @@ def generate_with_style(prompt: str, style_profile: dict) -> str:
         opening = "Hi there!"
         closing = "Best regards,"
 
-    # ---------------- FINAL OUTPUT ----------------
     return f"""{opening}
 
 {body}
 
-{closing}
-"""
+{closing}"""
+
+
+# ===================== SIDE-BY-SIDE OUTPUT =====================
+def generate_side_by_side(prompt: str, preset: str, style_profile: dict) -> dict:
+    preset_output = generate_preset(prompt, preset)
+    personal_output = generate_with_style(prompt, style_profile)
+
+    return {
+        "preset": preset_output,
+        "personal": personal_output
+    }

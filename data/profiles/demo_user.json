@@ -1,0 +1,19 @@
+{
+    "avg_sentence_length": 0.96,
+    "vocabulary_richness": 0.002,
+    "formality_score": 0.0,
+    "common_words": {
+        "e": 3295,
+        "t": 2372,
+        "a": 2207,
+        "i": 2109,
+        "n": 1962,
+        "r": 1926,
+        "s": 1871,
+        "o": 1790,
+        "d": 1075,
+        "l": 1070
+    },
+    "sentence_count": 29935,
+    "word_count": 28610
+}
