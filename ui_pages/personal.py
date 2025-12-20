@@ -3,14 +3,14 @@ import pandas as pd
 
 from backend.document_processor import DocumentProcessor
 from backend.style_analyzer import StyleAnalyzer
-from backend.generator import generate_with_style, generate_side_by_side
+from backend.generator import generate_side_by_side
 from backend.profile_storage import save_style_profile, load_style_profile
 
 
 def show():
     st.title("👤 Personal Writing Style AI")
 
-    # ---------------- USER ID (SIMPLE DEMO USER) ----------------
+    # ---------------- USER (SIMPLE DEMO USER) ----------------
     username = "demo_user"
 
     # ---------------- INIT BACKEND ----------------
@@ -22,8 +22,7 @@ def show():
         st.session_state.uploaded_texts = []
 
     if "style_profile" not in st.session_state:
-        # 🔥 LOAD SAVED PROFILE IF EXISTS
-        st.session_state.style_profile = load_style_profile(username)
+        st.session_state.style_profile = None
 
     # ===================== UPLOAD =====================
     st.header("📁 Upload Your Writing Samples")
@@ -62,21 +61,22 @@ def show():
     # ===================== ANALYZE =====================
     st.header("🧠 Analyze Writing Style")
 
-    if st.button("Analyze My Writing Style"):
+    analyze_clicked = st.button("Analyze My Writing Style")
+
+    if analyze_clicked:
         if not st.session_state.uploaded_texts:
-            st.warning("Please upload at least one file.")
+            st.warning("Please upload at least one document before analyzing.")
         else:
             combined_text = "\n".join(st.session_state.uploaded_texts)
             profile = analyzer.analyze(combined_text)
 
-            # 🔥 SAVE PROFILE
             save_style_profile(username, profile)
             st.session_state.style_profile = profile
 
-            st.success("Style profile created & saved!")
+            st.success("✅ Style profile created & saved!")
 
     # ===================== METRICS =====================
-    if st.session_state.style_profile:
+    if st.session_state.style_profile is not None and st.session_state.uploaded_texts:
         profile = st.session_state.style_profile
 
         st.subheader("📊 Writing Style Metrics")
@@ -105,7 +105,7 @@ def show():
         st.write(list(profile["common_words"].keys()))
 
     # ===================== GENERATE =====================
-    st.header("✍️ Generate Text")
+    st.header("✍️ Generate Text (Side-by-Side)")
 
     prompt = st.text_area(
         "Enter your prompt:",
@@ -120,7 +120,7 @@ def show():
 
     if st.button("Generate Side-by-Side"):
         if not st.session_state.style_profile:
-            st.warning("Analyze your writing style first.")
+            st.warning("Please analyze your writing style first.")
         elif not prompt.strip():
             st.warning("Please enter a prompt.")
         else:

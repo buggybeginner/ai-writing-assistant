@@ -1,88 +1,82 @@
-import random
+import subprocess
+import json
+
+OLLAMA_MODEL = "llama3"
+
+
+def _call_ollama(prompt: str) -> str:
+    """
+    Calls Ollama locally and returns generated text
+    """
+    try:
+        result = subprocess.run(
+            ["ollama", "run", OLLAMA_MODEL],
+            input=prompt,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout.strip()
+    except Exception as e:
+        return f"⚠️ Ollama error: {e}"
+
 
 # ===================== PRESET GENERATION =====================
 def generate_preset(prompt: str, preset: str) -> str:
-    preset_prompts = {
-        "casual": "Write in a casual and friendly tone.",
-        "formal": "Write in a formal and professional tone.",
-        "academic": "Write in an academic and scholarly style."
+    preset_styles = {
+        "casual": "Write in a casual, friendly, conversational tone.",
+        "professional": "Write in a professional, formal business tone.",
+        "academic": "Write in a formal academic and scholarly style."
     }
 
-    instruction = preset_prompts.get(preset, "")
-    
-    return f"{instruction}\n\n{prompt}"
+    style_instruction = preset_styles.get(preset, "")
+
+    full_prompt = f"""
+You are a writing assistant.
+
+{style_instruction}
+
+Task:
+{prompt}
+
+Write the full response. Do NOT explain your style.
+"""
+
+    return _call_ollama(full_prompt)
 
 
 # ===================== PERSONAL STYLE GENERATION =====================
 def generate_with_style(prompt: str, style_profile: dict) -> str:
-    """
-    Intent-aware + style-aware text generation
-    """
+    avg_len = style_profile.get("avg_sentence_length", 12)
+    vocab = style_profile.get("vocabulary_richness", 0.5)
+    formality = style_profile.get("formality_score", 0.5)
 
-    prompt_lower = prompt.lower()
-    formality = style_profile.get("formality_score", 0)
+    style_description = f"""
+The user’s writing style has:
+- Average sentence length: {avg_len}
+- Vocabulary richness: {vocab}
+- Formality score: {formality}
 
-    # ---------- INTENT DETECTION ----------
-    if "social media" in prompt_lower or "post" in prompt_lower:
-        intent = "social"
-    elif "email" in prompt_lower:
-        intent = "email"
-    elif "abstract" in prompt_lower or "paper" in prompt_lower:
-        intent = "academic"
-    elif "motivational" in prompt_lower or "team" in prompt_lower:
-        intent = "motivation"
-    else:
-        intent = "general"
+Mimic this style closely.
+"""
 
-    # ---------- TEMPLATES ----------
-    templates = {
-        "social": [
-            "🚀 Big news! We're excited to launch something we've been working hard on.",
-            "✨ The wait is over! Our new product is finally here."
-        ],
-        "email": [
-            "I hope this message finds you well. Thank you for your support.",
-            "I truly appreciate your guidance and assistance."
-        ],
-        "academic": [
-            "This paper presents a detailed analysis of the proposed methodology.",
-            "The results demonstrate the effectiveness of the approach."
-        ],
-        "motivation": [
-            "Believe in yourself and keep pushing forward.",
-            "Every challenge is an opportunity to grow."
-        ],
-        "general": [
-            "Thank you for your time and consideration.",
-            "I appreciate your effort and support."
-        ]
-    }
+    full_prompt = f"""
+You are an AI that writes exactly like the user.
 
-    body = " ".join(
-        random.sample(templates[intent], min(2, len(templates[intent])))
-    )
+{style_description}
 
-    # ---------- STYLE TONE ----------
-    if formality > 0.6:
-        opening = "Dear Sir/Madam,"
-        closing = "Sincerely,"
-    else:
-        opening = "Hi there!"
-        closing = "Best regards,"
+Task:
+{prompt}
 
-    return f"""{opening}
+Write naturally. Do NOT mention analysis or metrics.
+"""
 
-{body}
-
-{closing}"""
+    return _call_ollama(full_prompt)
 
 
-# ===================== SIDE-BY-SIDE OUTPUT =====================
+# ===================== SIDE-BY-SIDE =====================
 def generate_side_by_side(prompt: str, preset: str, style_profile: dict) -> dict:
-    preset_output = generate_preset(prompt, preset)
-    personal_output = generate_with_style(prompt, style_profile)
-
     return {
-        "preset": preset_output,
-        "personal": personal_output
+        "preset": generate_preset(prompt, preset),
+        "personal": generate_with_style(prompt, style_profile)
     }
