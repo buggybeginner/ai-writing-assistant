@@ -1,9 +1,12 @@
 import streamlit as st
 import os
 import sys
+import base64
 
-# Add ui_pages to Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), "ui_pages"))
+# --------------------- PATHS ---------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ICON_DIR = os.path.join(BASE_DIR, "assets", "icons")
+sys.path.append(os.path.join(BASE_DIR, "ui_pages"))
 
 # --------------------- PAGE CONFIG ---------------------
 st.set_page_config(
@@ -13,85 +16,87 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --------------------- SESSION DEFAULTS ---------------------
-defaults = {
-    "user_id": None,
-    "user_name": "Guest",
-    "generation_history": [],
-    "uploaded_files": [],
-    "selected_personality": "casual_friendly",
-    "nav_selection": "Home",     # <- the ONLY navigation variable
-    "pending_nav": None          # <- used by buttons
-}
-for key, value in defaults.items():
-    st.session_state.setdefault(key, value)
+# --------------------- SESSION STATE ---------------------
+if "nav_selection" not in st.session_state:
+    st.session_state.nav_selection = "Home"
 
 # --------------------- LOAD CSS ---------------------
 def load_css():
-    try:
-        with open("assets/styles.css") as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except:
-        pass
+    with open(os.path.join(BASE_DIR, "assets", "styles.css")) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# --------------------- SVG TO BASE64 ---------------------
+def svg_to_base64(path):
+    with open(path, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode("utf-8")
+    return f"data:image/svg+xml;base64,{encoded}"
 
 # --------------------- SIDEBAR ---------------------
 def show_sidebar():
-    # 🔥 Handle home-page button-click navigation
-    if st.session_state.pending_nav:
-        st.session_state.nav_selection = st.session_state.pending_nav
-        st.session_state.pending_nav = None
-
     with st.sidebar:
-        st.markdown("""
-        <div style="text-align: center; padding: 1rem 0;">
-            <h1 style="font-size: 1.8rem; margin: 0;">🎭 PersonaWrite AI</h1>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        pages = ["Home", "Preset Personalities", "Personal Style", "Dashboard"]
-
-        selected = st.radio(
-            "Navigation",
-            pages,
-            index=pages.index(st.session_state.nav_selection),
-            key="nav_selection"  # <-- THIS MUST NEVER BE MODIFIED IN OTHER FILES
+        st.markdown(
+            """
+            <div class="sidebar-title">PersonaWrite</div>
+            <div class="sidebar-subtitle">AI Writing Assistant ✨</div>
+            <div class="sidebar-nav">
+            """,
+            unsafe_allow_html=True,
         )
 
-        return selected
+        def nav_item(label, icon):
+            active = "active" if st.session_state.nav_selection == label else ""
+            icon_src = svg_to_base64(os.path.join(ICON_DIR, icon))
+
+            st.markdown(
+                f"""
+                <a href="?nav={label}" class="sidebar-btn {active}">
+                    <img src="{icon_src}" />
+                    <span>{label}</span>
+                </a>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        nav_item("Home", "home.svg")
+        nav_item("Preset Personalities", "preset.svg")
+        nav_item("Personal Style", "personal.svg")
+        nav_item("Dashboard", "dashboard.svg")
+
+        st.markdown(
+            """
+            </div>
+            <div class="sidebar-footer">✨ Powered by AI ✨</div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Read navigation from URL
+    query = st.query_params
+    if "nav" in query:
+        st.session_state.nav_selection = query["nav"][0]
+
+    return st.session_state.nav_selection
 
 # --------------------- MAIN ROUTER ---------------------
 def main():
     load_css()
-    selected_page = show_sidebar()
+    page = show_sidebar()
 
-    try:
-        if selected_page == "Home":
-            from ui_pages.home import show
-            show()
+    if page == "Home":
+        from ui_pages.home import show
+        show()
 
-        elif selected_page == "Preset Personalities":
-            from ui_pages.preset import show
-            show()
+    elif page == "Preset Personalities":
+        from ui_pages.preset import show
+        show()
 
-        elif selected_page == "Personal Style":
-            from ui_pages.personal import show
-            show()
+    elif page == "Personal Style":
+        from ui_pages.personal import show
+        show()
 
-        elif selected_page == "Dashboard":
-            from ui_pages.dashboard import show
-            show()
-
-    except Exception as e:
-        st.error(f"Error loading page: {e}")
-
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; color: #64748b; font-size: 0.9rem; padding: 1rem;">
-        🎭 <strong>PersonaWrite AI</strong><br>
-    </div>
-    """, unsafe_allow_html=True)
+    elif page == "Dashboard":
+        from ui_pages.dashboard import show
+        show()
 
 if __name__ == "__main__":
     main()
