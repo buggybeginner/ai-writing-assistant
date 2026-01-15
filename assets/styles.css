@@ -305,3 +305,21 @@ section[data-testid="stSidebar"] button:focus {
 .sidebar-btn:visited {
     text-decoration: none !important;
 }
+/* Make Streamlit button text invisible but clickable */
+section[data-testid="stSidebar"] .stButton > button {
+    background: transparent !important;
+    color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Ensure sidebar-btn stays clickable */
+.sidebar-btn {
+    position: relative;
+}
+
+.sidebar-btn .stButton {
+    position: absolute;
+    inset: 0;
+}

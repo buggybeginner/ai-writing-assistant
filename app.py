@@ -44,18 +44,25 @@ def show_sidebar():
         )
 
         def nav_item(label, icon):
-            active = "active" if st.session_state.nav_selection == label else ""
+            is_active = st.session_state.nav_selection == label
+            active_class = "active" if is_active else ""
             icon_src = svg_to_base64(os.path.join(ICON_DIR, icon))
 
+            # VISUAL CONTAINER
             st.markdown(
                 f"""
-                <a href="?nav={label}" class="sidebar-btn {active}">
-                    <img src="{icon_src}" />
-                    <span>{label}</span>
-                </a>
+                <div class="sidebar-btn {active_class}">
+                    <img src="{icon_src}">
                 """,
                 unsafe_allow_html=True,
             )
+
+            # CLICKABLE BUTTON (STREAMLIT CONTROLLED)
+            if st.button(label, key=f"nav_{label}", use_container_width=True):
+                st.session_state.nav_selection = label
+                st.rerun()
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
         nav_item("Home", "home.svg")
         nav_item("Preset Personalities", "preset.svg")
@@ -70,12 +77,8 @@ def show_sidebar():
             unsafe_allow_html=True,
         )
 
-    # Read navigation from URL
-    query = st.query_params
-    if "nav" in query:
-        st.session_state.nav_selection = query["nav"][0]
-
     return st.session_state.nav_selection
+
 
 # --------------------- MAIN ROUTER ---------------------
 def main():
