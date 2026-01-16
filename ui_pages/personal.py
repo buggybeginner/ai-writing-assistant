@@ -4,16 +4,13 @@ import pandas as pd
 from backend.document_processor import DocumentProcessor
 from backend.style_analyzer import StyleAnalyzer
 from backend.generator import generate_side_by_side
-from backend.profile_storage import save_style_profile, load_style_profile
+from backend.profile_storage import save_style_profile
 
 
 def show():
-    st.title("👤 Personal Writing Style AI")
-
-    # ---------------- USER (SIMPLE DEMO USER) ----------------
+    # ---------------- USER ----------------
     username = "demo_user"
 
-    # ---------------- INIT BACKEND ----------------
     processor = DocumentProcessor()
     analyzer = StyleAnalyzer()
 
@@ -24,8 +21,19 @@ def show():
     if "style_profile" not in st.session_state:
         st.session_state.style_profile = None
 
-    # ===================== UPLOAD =====================
-    st.header("📁 Upload Your Writing Samples")
+    # ---------------- HEADER ----------------
+    st.markdown("""
+        <div class="home-hero">
+            <h1>👤 Personal Writing Style AI</h1>
+            <p>Train AI on your unique writing style ✨</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # ==========================================================
+    # 📁 UPLOAD CARD
+    # ==========================================================
+    st.markdown('<div class="figma-card upload-card">', unsafe_allow_html=True)
+    st.markdown("<h3>📁 Upload Your Writing Samples</h3>", unsafe_allow_html=True)
 
     uploaded_files = st.file_uploader(
         "Upload writing samples (.txt, .pdf, .docx)",
@@ -40,15 +48,11 @@ def show():
             try:
                 if file.type == "text/plain":
                     text = file.read().decode("utf-8", errors="ignore")
-
                 elif file.type == "application/pdf":
                     text = processor.read_pdf(file)
-
                 elif file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
                     text = processor.read_docx(file)
-
                 else:
-                    st.warning(f"Unsupported file: {file.name}")
                     continue
 
                 st.session_state.uploaded_texts.append(text)
@@ -56,61 +60,57 @@ def show():
             except Exception as e:
                 st.error(f"Failed to read {file.name}: {e}")
 
-        st.success(f"{len(st.session_state.uploaded_texts)} files processed successfully")
+        st.success(f"✅ {len(st.session_state.uploaded_texts)} file(s) processed")
 
-    # ===================== ANALYZE =====================
-    st.header("🧠 Analyze Writing Style")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    analyze_clicked = st.button("Analyze My Writing Style")
+    # ==========================================================
+    # 🧠 ANALYZE CARD
+    # ==========================================================
+    st.markdown('<div class="figma-card analyze-card">', unsafe_allow_html=True)
+    st.markdown("<h3>🧠 Analyze Writing Style</h3>", unsafe_allow_html=True)
 
-    if analyze_clicked:
+    if st.button("✨ Analyze My Writing Style", use_container_width=True):
         if not st.session_state.uploaded_texts:
-            st.warning("Please upload at least one document before analyzing.")
+            st.warning("Please upload at least one document.")
         else:
             combined_text = "\n".join(st.session_state.uploaded_texts)
             profile = analyzer.analyze(combined_text)
 
             save_style_profile(username, profile)
             st.session_state.style_profile = profile
+            st.success("🎉 Style profile created successfully!")
 
-            st.success("✅ Style profile created & saved!")
-
-    # ===================== METRICS =====================
-    if st.session_state.style_profile is not None and st.session_state.uploaded_texts:
+    if st.session_state.style_profile:
         profile = st.session_state.style_profile
-
-        st.subheader("📊 Writing Style Metrics")
 
         col1, col2, col3 = st.columns(3)
         col1.metric("Avg Sentence Length", profile["avg_sentence_length"])
         col2.metric("Vocabulary Richness", profile["vocabulary_richness"])
         col3.metric("Formality Score", profile["formality_score"])
 
-        metrics_df = pd.DataFrame({
-            "Metric": [
-                "Avg Sentence Length",
-                "Vocabulary Richness",
-                "Formality Score"
-            ],
+        df = pd.DataFrame({
+            "Metric": ["Avg Sentence Length", "Vocabulary Richness", "Formality Score"],
             "Value": [
                 profile["avg_sentence_length"],
                 profile["vocabulary_richness"],
                 profile["formality_score"]
             ]
         })
+        st.bar_chart(df.set_index("Metric"))
 
-        st.bar_chart(metrics_df.set_index("Metric"))
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("**Common Words:**")
-        st.write(list(profile["common_words"].keys()))
-
-    # ===================== GENERATE =====================
-    st.header("✍️ Generate Text (Side-by-Side)")
+    # ==========================================================
+    # ✍️ GENERATE SIDE-BY-SIDE CARD
+    # ==========================================================
+    st.markdown('<div class="figma-card generate-card">', unsafe_allow_html=True)
+    st.markdown("<h3>✍️ Generate Text (Side-by-Side)</h3>", unsafe_allow_html=True)
 
     prompt = st.text_area(
-        "Enter your prompt:",
+        "Enter your prompt",
         "Write a thank-you email to my professor.",
-        height=150
+        height=140
     )
 
     preset_style = st.selectbox(
@@ -118,27 +118,28 @@ def show():
         ["casual", "academic", "professional"]
     )
 
-    if st.button("Generate Side-by-Side"):
+    if st.button("⚡ Generate Side-by-Side", use_container_width=True):
         if not st.session_state.style_profile:
             st.warning("Please analyze your writing style first.")
         elif not prompt.strip():
             st.warning("Please enter a prompt.")
         else:
-            with st.spinner("Generating outputs..."):
+            with st.spinner("Generating comparison..."):
                 outputs = generate_side_by_side(
                     prompt=prompt,
                     preset=preset_style,
                     style_profile=st.session_state.style_profile
                 )
 
-            st.subheader("🧩 Side-by-Side Comparison")
-
             col1, col2 = st.columns(2)
-
             with col1:
                 st.markdown("### 🎭 Preset Personality")
                 st.success(outputs["preset"])
 
             with col2:
-                st.markdown("### 👤 Personal AI Twin")
+                st.markdown("### 👤 Your Writing Style")
                 st.success(outputs["personal"])
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='page-footer'>✨ Powered by PersonaWrite AI ✨</div>", unsafe_allow_html=True)

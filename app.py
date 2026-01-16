@@ -1,11 +1,9 @@
 import streamlit as st
 import os
 import sys
-import base64
 
 # --------------------- PATHS ---------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ICON_DIR = os.path.join(BASE_DIR, "assets", "icons")
 sys.path.append(os.path.join(BASE_DIR, "ui_pages"))
 
 # --------------------- PAGE CONFIG ---------------------
@@ -25,12 +23,6 @@ def load_css():
     with open(os.path.join(BASE_DIR, "assets", "styles.css")) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# --------------------- SVG TO BASE64 ---------------------
-def svg_to_base64(path):
-    with open(path, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode("utf-8")
-    return f"data:image/svg+xml;base64,{encoded}"
-
 # --------------------- SIDEBAR ---------------------
 def show_sidebar():
     with st.sidebar:
@@ -43,31 +35,27 @@ def show_sidebar():
             unsafe_allow_html=True,
         )
 
-        def nav_item(label, icon):
+        def nav_item(label):
             is_active = st.session_state.nav_selection == label
             active_class = "active" if is_active else ""
-            icon_src = svg_to_base64(os.path.join(ICON_DIR, icon))
 
-            # VISUAL CONTAINER
             st.markdown(
-                f"""
-                <div class="sidebar-btn {active_class}">
-                    <img src="{icon_src}">
-                """,
-                unsafe_allow_html=True,
+                f'<div class="sidebar-btn {active_class}">',
+                unsafe_allow_html=True
             )
 
-            # CLICKABLE BUTTON (STREAMLIT CONTROLLED)
+            # Button FIRST (controls logic)
             if st.button(label, key=f"nav_{label}", use_container_width=True):
                 st.session_state.nav_selection = label
                 st.rerun()
 
+            # Visual pill
             st.markdown("</div>", unsafe_allow_html=True)
 
-        nav_item("Home", "home.svg")
-        nav_item("Preset Personalities", "preset.svg")
-        nav_item("Personal Style", "personal.svg")
-        nav_item("Dashboard", "dashboard.svg")
+        nav_item("Home")
+        nav_item("Preset Personalities")
+        nav_item("Personal Style")
+        nav_item("Dashboard")
 
         st.markdown(
             """
@@ -78,7 +66,6 @@ def show_sidebar():
         )
 
     return st.session_state.nav_selection
-
 
 # --------------------- MAIN ROUTER ---------------------
 def main():

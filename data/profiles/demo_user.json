@@ -1,19 +1,19 @@
 {
-    "avg_sentence_length": 29.44,
-    "vocabulary_richness": 0.817,
+    "avg_sentence_length": 44.33,
+    "vocabulary_richness": 0.662,
     "formality_score": 0.0,
     "common_words": {
-        "the": 18,
-        "in": 14,
-        "to": 13,
-        "of": 5,
-        "can": 5,
-        "ke": 5,
-        "al": 5,
-        "test": 4,
-        "machine": 4,
-        "ar": 4
+        "add": 8,
+        "day": 6,
+        "create": 6,
+        "deploy": 3,
+        "endpoint": 3,
+        "to": 3,
+        "all": 3,
+        "test": 3,
+        "deployed": 3,
+        "week": 2
     },
-    "sentence_count": 18,
-    "word_count": 530
+    "sentence_count": 3,
+    "word_count": 133
 }
