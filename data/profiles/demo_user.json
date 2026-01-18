@@ -1,19 +1,19 @@
 {
-    "avg_sentence_length": 29.44,
-    "vocabulary_richness": 0.817,
+    "avg_sentence_length": 12.13,
+    "vocabulary_richness": 0.725,
     "formality_score": 0.0,
     "common_words": {
-        "the": 18,
-        "in": 14,
-        "to": 13,
-        "of": 5,
-        "can": 5,
-        "ke": 5,
-        "al": 5,
-        "test": 4,
-        "machine": 4,
-        "ar": 4
+        "and": 11,
+        "in": 5,
+        "engineering": 3,
+        "of": 3,
+        "programming": 3,
+        "skills": 3,
+        "web": 3,
+        "development": 3,
+        "using": 3,
+        "shreyanka": 2
     },
-    "sentence_count": 18,
-    "word_count": 530
+    "sentence_count": 15,
+    "word_count": 182
 }

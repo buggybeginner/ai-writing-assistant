@@ -1,12 +1,12 @@
 /* =========================================================
-   PersonaWrite AI – Clean Figma-Style UI (FINAL)
+   PersonaWrite AI – Clean Figma-Style UI (FINAL STABLE)
    ========================================================= */
 
 /* ================= THEME VARIABLES ================= */
 :root {
-    --primary: #6366f1;
+    --primary: #5c5ee9;
     --secondary: #ec4899;
-    --bg-main: #f8fafc;
+    --bg-main: #9fadbb;
     --text-main: #1e293b;
     --text-muted: #64748b;
     --card-bg: #ffffff;
@@ -15,7 +15,7 @@
 
 /* ================= BASE APP ================= */
 .stApp {
-    background: linear-gradient(135deg, #fdf4ff, #ecfeff);
+    background: linear-gradient(135deg, #ecd1f6, #ecfeff);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     color: var(--text-main);
 }
@@ -30,7 +30,7 @@ section[data-testid="stSidebar"] {
 }
 
 section[data-testid="stSidebar"] * {
-    color: white !important;
+    color: black !important;
 }
 
 /* Sidebar header */
@@ -42,7 +42,7 @@ section[data-testid="stSidebar"] * {
 
 .sidebar-subtitle {
     font-size: 1rem;
-    color: #e9d5ff;
+    color: #6e6973;
     margin-bottom: 2.5rem;
 }
 
@@ -53,60 +53,48 @@ section[data-testid="stSidebar"] * {
     gap: 1.3rem;
 }
 
-/* NAV PILL (INTENTIONAL OVAL) */
-.sidebar-btn {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+/* =====================================================
+   🔥 THIS IS THE ONLY PILL (STREAMLIT BUTTON ITSELF)
+   ===================================================== */
+section[data-testid="stSidebar"] .stButton > button {
+    width: 100%;
+    height: 52px;
 
-    padding: 0.9rem 1.4rem;
+    padding: 0 1.4rem;
     border-radius: 999px;
 
-    background: rgba(255, 255, 255, 0.18); /* GLASS */
+    background: rgba(255, 255, 255, 0.18);
     backdrop-filter: blur(10px);
 
     font-size: 1.05rem;
     font-weight: 500;
+    text-align: left;
+
+    border: none;
+    box-shadow: none;
 
     transition: all 0.25s ease;
 }
 
-/* ICON */
-.sidebar-btn img {
-    width: 22px;
-    height: 22px;
-    filter: brightness(0) invert(1);
-}
-
-/* HOVER */
-.sidebar-btn:hover {
+/* Hover */
+section[data-testid="stSidebar"] .stButton > button:hover {
     background: rgba(255, 255, 255, 0.28);
     transform: translateX(4px);
 }
 
-/* ACTIVE (ONLY ONE STRONG) */
-.sidebar-btn.active {
+/* Active (keyboard + click safe) */
+section[data-testid="stSidebar"] .stButton > button:focus {
     background: linear-gradient(90deg, #38bdf8, #818cf8);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    transform: translateX(6px);
+    outline: none;
 }
 
-/* ================= REMOVE STREAMLIT BUTTON GHOSTS ================= */
-section[data-testid="stSidebar"] .stButton,
-section[data-testid="stSidebar"] .stButton > button {
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-section[data-testid="stSidebar"] button:focus {
+/* Remove ugly focus outline */
+section[data-testid="stSidebar"] button:focus-visible {
     outline: none !important;
-    box-shadow: none !important;
 }
 
-/* Sidebar footer */
+/* ================= SIDEBAR FOOTER ================= */
 .sidebar-footer {
     margin-top: 4rem;
     font-size: 0.8rem;
@@ -163,21 +151,10 @@ section[data-testid="stSidebar"] button:focus {
     background: linear-gradient(90deg, #ec4899, #8b5cf6);
 }
 
-.home-card h3 {
-    margin: 0;
-    font-size: 1.2rem;
-}
-
-.home-card p {
-    margin-top: 0.4rem;
-    font-size: 0.95rem;
-    opacity: 0.95;
-}
-
-/* ================= BUTTONS ================= */
-.stButton > button {
-    background: linear-gradient(90deg, #6366f1, #8b5cf6);
-    color: white;
+/* ================= MAIN CONTENT BUTTONS ================= */
+.stApp div:not([data-testid="stSidebar"]) .stButton > button {
+    background: linear-gradient(45deg, #8ca0cd, #c4e8ee);
+    color: black;
     border-radius: 14px;
     padding: 0.75rem 1.5rem;
     border: none;
@@ -185,19 +162,9 @@ section[data-testid="stSidebar"] button:focus {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.stButton > button:hover {
+.stApp div:not([data-testid="stSidebar"]) .stButton > button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-}
-
-/* ================= GENERATED OUTPUT ================= */
-.generated-output {
-    background: #f0f9ff;
-    border-left: 4px solid #6366f1;
-    padding: 1.2rem;
-    border-radius: 12px;
-    margin-top: 1rem;
-    color: var(--text-main);
 }
 
 /* ================= RESPONSIVE ================= */
@@ -215,111 +182,74 @@ section[data-testid="stSidebar"] button:focus {
         padding: 1.5rem;
     }
 }
-/* ================= FIX SIDEBAR GHOST OVALS ================= */
+/* Fix for Dashboard Metric Cards */
+.dash-card {
+    padding: 1.2rem !important;
+    border-radius: 20px !important;
+    color: white !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    text-align: left !important;
+}
 
-/* Remove Streamlit button background */
-section[data-testid="stSidebar"] .stButton > button {
-    background: transparent !important;
+.dash-blue { background: linear-gradient(135deg, #06b6d4, #3b82f6) !important; }
+.dash-purple { background: linear-gradient(135deg, #a855f7, #6366f1) !important; }
+.dash-orange { background: linear-gradient(135deg, #f97316, #ef4444) !important; }
+.dash-green { background: linear-gradient(135deg, #10b981, #3b82f6) !important; }
+
+.dash-card-value { font-size: 2rem !important; font-weight: 800 !important; margin: 5px 0 !important; }
+.dash-card-label { font-size: 0.8rem !important; font-weight: 600 !important; opacity: 0.8 !important; }
+
+/* Dashboard List Items */
+.history-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0.8rem 1.2rem !important;
+    border: 1px solid #f1f5f9 !important;
+    border-radius: 14px !important;
+    margin-bottom: 10px !important;
+    background: white !important;
+}
+
+.history-title { font-weight: 700 !important; color: #1e293b !important; font-size: 0.95rem !important; }
+.history-tag { background: #f1f5f9 !important; color: #6366f1 !important; padding: 2px 8px !important; border-radius: 6px !important; font-size: 0.7rem !important; font-weight: 800 !important; }
+.history-time { font-size: 0.7rem !important; color: #94a3b8 !important; margin-left: 8px !important; }
+
+/* PROGRESS BAR FIX - Ensures these are not rendered as text */
+.progress-bg {
+    background: #e2e8f0 !important;
+    height: 8px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+}
+.progress-fill {
+    height: 100% !important;
+    border-radius: 10px !important;
+}
+/* Fix for the Data Management Buttons specifically */
+div[data-testid="stColumn"] button {
+    height: 3.5rem !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* Specific styling for the Clear button to make it pop */
+button[key="clear_history_btn"] {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+/* Specific styling for the Report button */
+button[key="gen_report_btn"] {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
+    color: white !important;
     border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
 }
 
-/* Remove button container spacing */
-section[data-testid="stSidebar"] .stButton {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* Remove focus outline */
-section[data-testid="stSidebar"] button:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-/* ================= FINAL SIDEBAR FIXES ================= */
-
-/* Make nav links block-level */
-.sidebar-link {
-    display: block;
-    margin-bottom: 1.2rem;
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* Kill white focus squares */
-.sidebar-link:focus,
-.sidebar-link:focus-visible,
-.sidebar-link:active {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* Ensure SVG icons show on dark bg */
-.sidebar-btn img {
-    width: 22px;
-    height: 22px;
-    display: block;
-}
-/* Sidebar link reset */
-.sidebar-btn {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    text-decoration: none;
-    cursor: pointer;
-    margin-bottom: 1.5rem;
-}
-
-/* Prevent white squares */
-.sidebar-btn:focus,
-.sidebar-btn:active {
-    outline: none;
-    box-shadow: none;
-}
-
-/* Icon wrapper */
-.sidebar-btn .icon {
-    display: flex;
-    align-items: center;
-}
-
-/* Text */
-.sidebar-btn .label {
-    font-size: 1.05rem;
-    font-weight: 500;
-}
-/* ================= SIDEBAR TEXT FIX ================= */
-
-/* Remove underline from nav text */
-.sidebar-btn,
-.sidebar-btn span,
-.sidebar-btn a {
-    text-decoration: none !important;
-}
-
-/* Kill underline on hover & active */
-.sidebar-btn:hover,
-.sidebar-btn:hover span,
-.sidebar-btn:active,
-.sidebar-btn:active span,
-.sidebar-btn:visited {
-    text-decoration: none !important;
-}
-/* Make Streamlit button text invisible but clickable */
-section[data-testid="stSidebar"] .stButton > button {
-    background: transparent !important;
-    color: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* Ensure sidebar-btn stays clickable */
-.sidebar-btn {
-    position: relative;
-}
-
-.sidebar-btn .stButton {
-    position: absolute;
-    inset: 0;
+/* Ensure History items don't have default streamlit padding issues */
+.history-item {
+    min-height: 80px !important;
 }

@@ -16,6 +16,7 @@ def _call_ollama(prompt: str) -> str:
             text=True,
             check=True
         )
+    
         return result.stdout.strip()
     except Exception as e:
         return f"⚠️ Ollama error: {e}"

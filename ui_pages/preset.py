@@ -11,118 +11,110 @@ def show():
     if "generated_text" not in st.session_state:
         st.session_state.generated_text = ""
 
+    if "selected_personality" not in st.session_state:
+        st.session_state.selected_personality = "casual"
+
     # ---------------- HEADER ----------------
     st.markdown("""
-    <div style="text-align:center; margin-bottom:2rem;">
-        <h1>🎭 Preset Personalities</h1>
-        <p style="color:#64748b;">Choose from carefully crafted writing styles</p>
-    </div>
+        <div class="home-hero">
+            <h1>🎭 Preset Personalities</h1>
+            <p>Choose from carefully crafted writing styles</p>
+        </div>
     """, unsafe_allow_html=True)
 
-    # ---------------- PERSONALITIES ----------------
+    # ---------------- DATA ----------------
     PERSONALITIES = {
         "casual": {
             "name": "Casual Friendly",
             "icon": "😊",
             "desc": "Warm and conversational tone.",
-            "profile": {
-                "avg_sentence_length": 10,
-                "formality_score": 0.2,
-                "vocabulary_richness": 0.4
-            }
+            "profile": {"avg_sentence_length": 10, "formality_score": 0.2, "vocabulary_richness": 0.4}
         },
         "corporate": {
             "name": "Corporate Professional",
             "icon": "💼",
             "desc": "Formal business communication.",
-            "profile": {
-                "avg_sentence_length": 16,
-                "formality_score": 0.7,
-                "vocabulary_richness": 0.6
-            }
+            "profile": {"avg_sentence_length": 16, "formality_score": 0.7, "vocabulary_richness": 0.6}
         },
         "academic": {
             "name": "Formal Academic",
             "icon": "🎓",
             "desc": "Scholarly academic writing.",
-            "profile": {
-                "avg_sentence_length": 22,
-                "formality_score": 0.9,
-                "vocabulary_richness": 0.8
-            }
+            "profile": {"avg_sentence_length": 22, "formality_score": 0.9, "vocabulary_richness": 0.8}
         },
         "motivational": {
             "name": "Motivational Speaker",
             "icon": "🚀",
             "desc": "Energetic and inspiring tone.",
-            "profile": {
-                "avg_sentence_length": 14,
-                "formality_score": 0.4,
-                "vocabulary_richness": 0.7
-            }
+            "profile": {"avg_sentence_length": 14, "formality_score": 0.4, "vocabulary_richness": 0.7}
         }
     }
 
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 1.2], gap="large")
 
     # ================= LEFT =================
     with col1:
         st.subheader("🎨 Choose Your Style")
 
-        selected_style = st.radio(
-            "Select a personality",
-            options=list(PERSONALITIES.keys()),
-            format_func=lambda x: f"{PERSONALITIES[x]['icon']} {PERSONALITIES[x]['name']}",
-            key="selected_style"
-        )
+        for pid, pdata in PERSONALITIES.items():
+            is_active = st.session_state.selected_personality == pid
 
-        st.markdown(
-            f"### {PERSONALITIES[selected_style]['icon']} {PERSONALITIES[selected_style]['name']}"
-        )
-        st.write(PERSONALITIES[selected_style]["desc"])
+            if st.button(
+                f"{pdata['icon']} {pdata['name']}",
+                key=f"style_{pid}",
+                use_container_width=True
+            ):
+                st.session_state.selected_personality = pid
+
+        current = PERSONALITIES[st.session_state.selected_personality]
+        st.markdown(f"""
+            <div class="info-card-active">
+                <strong>{current['icon']} {current['name']}</strong>
+                <p>{current['desc']}</p>
+            </div>
+        """, unsafe_allow_html=True)
 
     # ================= RIGHT =================
     with col2:
         st.subheader("✍️ Write with Your Style")
 
-        # -------- QUICK PROMPTS --------
-        st.markdown("💡 **Quick Prompts**")
+        st.markdown("**Quick Prompts**")
 
-        prompt_cols = st.columns(2)
-        prompts = [
-            "Social media post for product launch",
-            "Professional email to a client",
-            "Motivational message for the team",
-            "Academic paper abstract"
-        ]
+        q1, q2 = st.columns(2)
 
-        for i, prompt in enumerate(prompts):
-            with prompt_cols[i % 2]:
-                if st.button(prompt, key=f"prompt_{i}"):
-                    st.session_state.prompt_text = prompt
+        with q1:
+            if st.button("Social media post"):
+                st.session_state.prompt_text = "Write a social media post for a product launch."
+            if st.button("Motivational message"):
+                st.session_state.prompt_text = "Write a motivational message for a team."
 
-        # -------- TEXT AREA --------
+        with q2:
+            if st.button("Professional email"):
+                st.session_state.prompt_text = "Write a professional email to a client."
+            if st.button("Academic abstract"):
+                st.session_state.prompt_text = "Write an academic paper abstract."
+
         st.text_area(
             "What would you like to write about?",
             key="prompt_text",
-            height=160
+            height=180
         )
 
-        st.caption(f"Characters: {len(st.session_state.prompt_text)}/500")
+        style_name = PERSONALITIES[st.session_state.selected_personality]["name"]
 
-        # -------- GENERATE --------
-        if st.button(f"✨ Generate with {PERSONALITIES[selected_style]['name']}"):
+        if st.button(f"✨ Generate with {style_name}", use_container_width=True):
             if not st.session_state.prompt_text.strip():
-                st.warning("Please enter some text.")
+                st.warning("Please enter a prompt.")
             else:
                 with st.spinner("Generating..."):
-                    time.sleep(0.8)
+                    time.sleep(0.6)
                     st.session_state.generated_text = generate_with_style(
                         st.session_state.prompt_text,
-                        PERSONALITIES[selected_style]["profile"]  # ✅ FIX
+                        PERSONALITIES[st.session_state.selected_personality]["profile"]
                     )
 
-        # -------- OUTPUT --------
         if st.session_state.generated_text:
             st.markdown("### 📝 Generated Output")
             st.success(st.session_state.generated_text)
+
+    st.markdown("<div class='page-footer'>✨ Powered by PersonaWrite AI ✨</div>", unsafe_allow_html=True)
