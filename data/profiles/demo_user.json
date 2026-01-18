@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "avg_sentence_length": 12.13,
     "vocabulary_richness": 0.725,
     "formality_score": 0.0,
@@ -16,4 +17,23 @@
     },
     "sentence_count": 15,
     "word_count": 182
+=======
+    "avg_sentence_length": 44.33,
+    "vocabulary_richness": 0.662,
+    "formality_score": 0.0,
+    "common_words": {
+        "add": 8,
+        "day": 6,
+        "create": 6,
+        "deploy": 3,
+        "endpoint": 3,
+        "to": 3,
+        "all": 3,
+        "test": 3,
+        "deployed": 3,
+        "week": 2
+    },
+    "sentence_count": 3,
+    "word_count": 133
+>>>>>>> a8460a52003ab46a0566ee4e48ecb20980f4e272
 }
