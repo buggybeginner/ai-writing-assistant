@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 from backend.document_processor import DocumentProcessor
 from backend.style_analyzer import StyleAnalyzer
@@ -20,6 +21,10 @@ def show():
 
     if "style_profile" not in st.session_state:
         st.session_state.style_profile = None
+
+    # ✅ REQUIRED FOR DASHBOARD
+    if "generation_history" not in st.session_state:
+        st.session_state.generation_history = []
 
     # ---------------- HEADER ----------------
     st.markdown("""
@@ -90,14 +95,24 @@ def show():
         col3.metric("Formality Score", profile["formality_score"])
 
         df = pd.DataFrame({
-            "Metric": ["Avg Sentence Length", "Vocabulary Richness", "Formality Score"],
+            "Metric": [
+                "Avg Sentence Length",
+                "Vocabulary Richness",
+                "Formality Score"
+            ],
             "Value": [
                 profile["avg_sentence_length"],
                 profile["vocabulary_richness"],
                 profile["formality_score"]
             ]
         })
+
         st.bar_chart(df.set_index("Metric"))
+
+        # ✅ COMMON WORDS DISPLAY (NO DESIGN CHANGE)
+        if "common_words" in profile:
+            st.markdown("### 🔤 Most Common Words")
+            st.write(", ".join(profile["common_words"]))
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -131,7 +146,19 @@ def show():
                     style_profile=st.session_state.style_profile
                 )
 
+            # ✅ SAVE TO DASHBOARD HISTORY
+            st.session_state.generation_history.append({
+                "input": prompt,
+                "personality": f"Personal vs {preset_style}",
+                "output": {
+                    "preset": outputs["preset"],
+                    "personal": outputs["personal"]
+                },
+                "timestamp": datetime.now()
+            })
+
             col1, col2 = st.columns(2)
+
             with col1:
                 st.markdown("### 🎭 Preset Personality")
                 st.success(outputs["preset"])
