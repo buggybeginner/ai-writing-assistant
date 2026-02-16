@@ -1,11 +1,30 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+import tempfile
+
+
+
+import json
+import os
+
+HISTORY_FILE = "data/history.json"
+
+def load_history_from_file():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r") as f:
+            return json.load(f)
+    return []
 
 def show():
     # ---------------- SAFE SESSION INIT ----------------
     if "generation_history" not in st.session_state:
-        st.session_state.generation_history = []
+        st.session_state.generation_history = load_history_from_file()
+
 
     if "uploaded_files" not in st.session_state:
         st.session_state.uploaded_files = []
@@ -173,22 +192,66 @@ def show():
             st.success("History cleared!")
             st.rerun()
 
+       # ✅ UPDATED REPORT SECTION (PROFESSIONAL PDF EXPORT)
     with b2:
         if st.button("📊 Generate Report", use_container_width=True):
             if history_data:
-                df = pd.DataFrame(history_data)
-                st.download_button(
-                    "⬇️ Download Report (CSV)",
-                    df.to_csv(index=False),
-                    "personawrite_report.csv",
-                    "text/csv",
-                    use_container_width=True
-                )
+
+                tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+                doc = SimpleDocTemplate(tmp_file.name)
+                elements = []
+
+                styles = getSampleStyleSheet()
+                normal = styles["Normal"]
+                title_style = styles["Heading1"]
+                subtitle_style = styles["Heading3"]
+
+                elements.append(Paragraph("PersonaWrite AI - Detailed Report", title_style))
+                elements.append(Spacer(1, 0.3 * inch))
+
+                for idx, item in enumerate(history_data, start=1):
+
+                    output_data = item.get("output", {})
+
+                    if isinstance(output_data, dict):
+                        preset_answer = output_data.get("preset", "")
+                        personal_answer = output_data.get("personal", "")
+                    else:
+                        preset_answer = ""
+                        personal_answer = ""
+
+                    elements.append(Paragraph(f"Entry {idx}", subtitle_style))
+                    elements.append(Spacer(1, 0.15 * inch))
+
+                    elements.append(Paragraph(f"<b>Question:</b> {item.get('input','')}", normal))
+                    elements.append(Spacer(1, 0.15 * inch))
+
+                    elements.append(Paragraph(f"<b>Preset Style:</b> {item.get('personality','')}", normal))
+                    elements.append(Spacer(1, 0.2 * inch))
+
+                    elements.append(Paragraph("<b>Preset Answer:</b>", normal))
+                    elements.append(Spacer(1, 0.1 * inch))
+                    elements.append(Paragraph(preset_answer.replace("\n", "<br/>"), normal))
+                    elements.append(Spacer(1, 0.25 * inch))
+
+                    elements.append(Paragraph("<b>Personal Answer:</b>", normal))
+                    elements.append(Spacer(1, 0.1 * inch))
+                    elements.append(Paragraph(personal_answer.replace("\n", "<br/>"), normal))
+                    elements.append(Spacer(1, 0.25 * inch))
+
+                    elements.append(HRFlowable(width="100%", thickness=1, color=colors.grey))
+                    elements.append(Spacer(1, 0.4 * inch))
+
+                doc.build(elements)
+
+                with open(tmp_file.name, "rb") as pdf_file:
+                    st.download_button(
+                        "⬇️ Download PDF Report",
+                        pdf_file,
+                        "personawrite_report.pdf",
+                        "application/pdf",
+                        use_container_width=True
+                    )
+
             else:
                 st.warning("No data to generate report.")
-
-    st.markdown("""
-        <div class='page-footer'>
-            ✨ PersonaWrite AI v2.0 • Dashboard Insights ✨
-        </div>
-    """, unsafe_allow_html=True)

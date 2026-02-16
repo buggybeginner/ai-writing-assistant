@@ -1,7 +1,9 @@
 import subprocess
-import json
 
-OLLAMA_MODEL = "llama3"
+# Always use full model tag
+OLLAMA_MODEL = "tinyllama:latest"
+
+
 
 
 def _call_ollama(prompt: str) -> str:
@@ -16,10 +18,17 @@ def _call_ollama(prompt: str) -> str:
             text=True,
             check=True
         )
-    
-        return result.stdout.strip()
+
+        if result.stdout:
+            return result.stdout.strip()
+        else:
+            return "⚠️ No output received from Ollama."
+
+    except subprocess.CalledProcessError as e:
+        return f"⚠️ Ollama error: {e.stderr or str(e)}"
+
     except Exception as e:
-        return f"⚠️ Ollama error: {e}"
+        return f"⚠️ Unexpected error: {e}"
 
 
 # ===================== PRESET GENERATION =====================

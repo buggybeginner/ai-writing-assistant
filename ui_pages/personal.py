@@ -7,6 +7,24 @@ from backend.style_analyzer import StyleAnalyzer
 from backend.generator import generate_side_by_side
 from backend.profile_storage import save_style_profile
 
+import os
+import json
+
+# ================= FILE STORAGE =================
+
+HISTORY_FILE = "data/history.json"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def save_history(history):
+    os.makedirs("data", exist_ok=True)
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=4, default=str)
+
 
 def show():
     # ---------------- USER ----------------
@@ -22,9 +40,8 @@ def show():
     if "style_profile" not in st.session_state:
         st.session_state.style_profile = None
 
-    # ✅ REQUIRED FOR DASHBOARD
     if "generation_history" not in st.session_state:
-        st.session_state.generation_history = []
+        st.session_state.generation_history = load_history()
 
     # ---------------- HEADER ----------------
     st.markdown("""
@@ -109,7 +126,6 @@ def show():
 
         st.bar_chart(df.set_index("Metric"))
 
-        # ✅ COMMON WORDS DISPLAY (NO DESIGN CHANGE)
         if "common_words" in profile:
             st.markdown("### 🔤 Most Common Words")
             st.write(", ".join(profile["common_words"]))
@@ -147,15 +163,20 @@ def show():
                 )
 
             # ✅ SAVE TO DASHBOARD HISTORY
-            st.session_state.generation_history.append({
+            new_entry = {
                 "input": prompt,
                 "personality": f"Personal vs {preset_style}",
                 "output": {
                     "preset": outputs["preset"],
                     "personal": outputs["personal"]
                 },
-                "timestamp": datetime.now()
-            })
+                "timestamp": datetime.now().isoformat()
+            }
+
+            st.session_state.generation_history.append(new_entry)
+
+            # 🔥 SAVE TO FILE
+            save_history(st.session_state.generation_history)
 
             col1, col2 = st.columns(2)
 
@@ -168,5 +189,4 @@ def show():
                 st.success(outputs["personal"])
 
     st.markdown("</div>", unsafe_allow_html=True)
-
     st.markdown("<div class='page-footer'>✨ Powered by PersonaWrite AI ✨</div>", unsafe_allow_html=True)
