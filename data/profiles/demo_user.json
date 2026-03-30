@@ -1,20 +1,20 @@
 {
-    "avg_sentence_length": 12.13,
-    "vocabulary_richness": 0.725,
+    "avg_sentence_length": 11.65,
+    "vocabulary_richness": 0.657,
     "formality_score": 0.6,
     "common_words": {
-        "and": 11,
-        "in": 5,
-        "engineering": 3,
-        "of": 3,
-        "programming": 3,
-        "skills": 3,
-        "web": 3,
-        "development": 3,
-        "using": 3,
-        "shreyanka": 2
+        "and": 14,
+        "in": 11,
+        "of": 5,
+        "ai": 5,
+        "engineering": 4,
+        "writing": 4,
+        "with": 4,
+        "to": 4,
+        "data": 4,
+        "analysis": 4
     },
     "personality": "Professional",
-    "sentence_count": 15,
-    "word_count": 182
+    "sentence_count": 26,
+    "word_count": 303
 }

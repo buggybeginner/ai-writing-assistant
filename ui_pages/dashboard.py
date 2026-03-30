@@ -6,9 +6,6 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 import tempfile
-
-
-
 import json
 import os
 
@@ -20,14 +17,17 @@ def load_history_from_file():
             return json.load(f)
     return []
 
+
 def show():
     # ---------------- SAFE SESSION INIT ----------------
     if "generation_history" not in st.session_state:
         st.session_state.generation_history = load_history_from_file()
 
-
     if "uploaded_files" not in st.session_state:
         st.session_state.uploaded_files = []
+
+    if "selected_entries" not in st.session_state:
+        st.session_state.selected_entries = []
 
     # ---------------- HEADER ----------------
     st.markdown("""
@@ -49,46 +49,46 @@ def show():
     m1, m2, m3, m4 = st.columns(4)
 
     with m1:
-        st.markdown(
-            f"""<div class="dash-card dash-blue">
-            <div class="dash-card-icon">📄</div>
-            <div class="dash-card-value">{total_gens}</div>
-            <div class="dash-card-label">Generated</div>
-            </div>""",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""<div class="dash-card dash-blue">
+        <div class="dash-card-icon">📄</div>
+        <div class="dash-card-value">{total_gens}</div>
+        <div class="dash-card-label">Generated</div>
+        </div>""", unsafe_allow_html=True)
 
     with m2:
-        st.markdown(
-            f"""<div class="dash-card dash-purple">
-            <div class="dash-card-icon">🎨</div>
-            <div class="dash-card-value">{styles_used}</div>
-            <div class="dash-card-label">Styles</div>
-            </div>""",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""<div class="dash-card dash-purple">
+        <div class="dash-card-icon">🎨</div>
+        <div class="dash-card-value">{styles_used}</div>
+        <div class="dash-card-label">Styles</div>
+        </div>""", unsafe_allow_html=True)
 
     with m3:
-        st.markdown(
-            f"""<div class="dash-card dash-orange">
-            <div class="dash-card-icon">🕒</div>
-            <div class="dash-card-value">{time_saved_val}m</div>
-            <div class="dash-card-label">Time Saved</div>
-            </div>""",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""<div class="dash-card dash-orange">
+        <div class="dash-card-icon">🕒</div>
+        <div class="dash-card-value">{time_saved_val}m</div>
+        <div class="dash-card-label">Time Saved</div>
+        </div>""", unsafe_allow_html=True)
 
     with m4:
-        st.markdown(
-            """<div class="dash-card dash-green">
-            <div class="dash-card-icon">📈</div>
-            <div class="dash-card-value">96%</div>
-            <div class="dash-card-label">Success Rate</div>
-            </div>""",
-            unsafe_allow_html=True
-        )
+        st.markdown("""<div class="dash-card dash-green">
+        <div class="dash-card-icon">📈</div>
+        <div class="dash-card-value">96%</div>
+        <div class="dash-card-label">Success Rate</div>
+        </div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
+    # ================= 📈 MATURITY TREND =================
+    if history_data:
+        st.markdown("### 🧬 Writing Maturity Trend")
+
+        df = pd.DataFrame(history_data)
+
+        if "maturity_score" in df.columns:
+            df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+            df = df.sort_values("timestamp")
+
+            st.line_chart(df.set_index("timestamp")["maturity_score"])
 
     # ---------------- MAIN CONTENT ----------------
     col_left, col_right = st.columns([1.5, 1], gap="medium")
@@ -156,8 +156,7 @@ def show():
             percent = int((count / total) * 100)
             st.markdown(f"""
                 <div style="margin-bottom:1.2rem;">
-                    <div style="display:flex; justify-content:space-between;
-                        font-weight:700; font-size:0.85rem; margin-bottom:6px;">
+                    <div style="display:flex; justify-content:space-between;">
                         <span>{style}</span>
                         <span>{percent}%</span>
                     </div>
@@ -167,18 +166,27 @@ def show():
                 </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("""
-            <div class="info-card-active" style="
-                margin-top:1.5rem;
-                background:linear-gradient(135deg,#8b5cf6,#ec4899);">
-                <strong>⚡ Quick Tip</strong>
-                <p style="font-size:0.8rem; margin:0;">
-                    Try Style Learning for better accuracy!
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-
         st.markdown("</div>", unsafe_allow_html=True)
+
+    # ================= ENTRY SELECTION =================
+    if history_data:
+        options = [
+            f"{i+1}. {item.get('input','Untitled')[:50]}"
+            for i, item in enumerate(history_data)
+        ]
+
+        selected_labels = st.multiselect(
+            "📌 Select entries to include in report",
+            options
+        )
+
+        selected_entries = []
+
+        for label in selected_labels:
+            index = int(label.split(".")[0]) - 1
+            selected_entries.append(history_data[index])
+
+        st.session_state.selected_entries = selected_entries
 
     # ---------------- DATA MANAGEMENT ----------------
     st.markdown("<br><hr><h3 style='color:#1e293b;'>⚙️ Data Management</h3>", unsafe_allow_html=True)
@@ -189,13 +197,16 @@ def show():
         if st.button("🔄 Clear All History", use_container_width=True):
             st.session_state.generation_history.clear()
             st.session_state.uploaded_files.clear()
+            st.session_state.selected_entries = []
             st.success("History cleared!")
             st.rerun()
 
-       # ✅ UPDATED REPORT SECTION (PROFESSIONAL PDF EXPORT)
     with b2:
         if st.button("📊 Generate Report", use_container_width=True):
-            if history_data:
+
+            selected_entries = st.session_state.selected_entries
+
+            if selected_entries:
 
                 tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
                 doc = SimpleDocTemplate(tmp_file.name)
@@ -206,19 +217,15 @@ def show():
                 title_style = styles["Heading1"]
                 subtitle_style = styles["Heading3"]
 
-                elements.append(Paragraph("PersonaWrite AI - Detailed Report", title_style))
+                elements.append(Paragraph("PersonaWrite AI - Selected Report", title_style))
                 elements.append(Spacer(1, 0.3 * inch))
 
-                for idx, item in enumerate(history_data, start=1):
+                for idx, item in enumerate(selected_entries, start=1):
 
                     output_data = item.get("output", {})
 
-                    if isinstance(output_data, dict):
-                        preset_answer = output_data.get("preset", "")
-                        personal_answer = output_data.get("personal", "")
-                    else:
-                        preset_answer = ""
-                        personal_answer = ""
+                    preset_answer = output_data.get("preset", "")
+                    personal_answer = output_data.get("personal", "")
 
                     elements.append(Paragraph(f"Entry {idx}", subtitle_style))
                     elements.append(Spacer(1, 0.15 * inch))
@@ -227,6 +234,13 @@ def show():
                     elements.append(Spacer(1, 0.15 * inch))
 
                     elements.append(Paragraph(f"<b>Preset Style:</b> {item.get('personality','')}", normal))
+                    elements.append(Spacer(1, 0.15 * inch))
+
+                    # ✅ NEW: MATURITY SCORE
+                    elements.append(Paragraph(
+                        f"<b>Maturity Score:</b> {item.get('maturity_score','N/A')}/100",
+                        normal
+                    ))
                     elements.append(Spacer(1, 0.2 * inch))
 
                     elements.append(Paragraph("<b>Preset Answer:</b>", normal))
@@ -246,12 +260,12 @@ def show():
 
                 with open(tmp_file.name, "rb") as pdf_file:
                     st.download_button(
-                        "⬇️ Download PDF Report",
+                        "⬇️ Download Selected PDF Report",
                         pdf_file,
-                        "personawrite_report.pdf",
+                        "personawrite_selected_report.pdf",
                         "application/pdf",
                         use_container_width=True
                     )
 
             else:
-                st.warning("No data to generate report.")
+                st.warning("Please select at least one entry.")

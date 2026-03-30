@@ -10,9 +10,29 @@ from backend.profile_storage import save_style_profile
 import os
 import json
 
-# ================= FILE STORAGE =================
 
+# ================= MATURITY FUNCTIONS =================
+def maturity_score(p):
+    return round(
+        40 * p["vocabulary_richness"] +
+        40 * p["formality_score"] +
+        20 * min(p["avg_sentence_length"] / 20, 1),
+        2
+    )
+
+
+def maturity_feedback(score):
+    if score >= 75:
+        return "🌟 Excellent writing. Strong vocabulary and professional tone."
+    elif score >= 55:
+        return "👍 Good writing. Try improving vocabulary and sentence variety."
+    else:
+        return "🛠 Basic writing. Focus on vocabulary and clearer sentence structure."
+
+
+# ================= FILE STORAGE =================
 HISTORY_FILE = "data/history.json"
+
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -20,14 +40,15 @@ def load_history():
             return json.load(f)
     return []
 
+
 def save_history(history):
     os.makedirs("data", exist_ok=True)
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=4, default=str)
 
 
+# ================= MAIN =================
 def show():
-    # ---------------- USER ----------------
     username = "demo_user"
 
     processor = DocumentProcessor()
@@ -103,9 +124,26 @@ def show():
             st.session_state.style_profile = profile
             st.success("🎉 Style profile created successfully!")
 
+    # ================= DISPLAY PROFILE =================
     if st.session_state.style_profile:
         profile = st.session_state.style_profile
 
+        # ✅ CALCULATE SCORE
+        score = maturity_score(profile)
+        profile["maturity_score"] = score
+
+        # ===== SHOW SCORE =====
+        st.markdown("### 🧬 Writing Maturity Score")
+
+        col_a, col_b = st.columns([1, 2])
+
+        with col_a:
+            st.metric("Score", f"{score}/100")
+
+        with col_b:
+            st.info(maturity_feedback(score))
+
+        # ===== METRICS =====
         col1, col2, col3 = st.columns(3)
         col1.metric("Avg Sentence Length", profile["avg_sentence_length"])
         col2.metric("Vocabulary Richness", profile["vocabulary_richness"])
@@ -162,10 +200,14 @@ def show():
                     style_profile=st.session_state.style_profile
                 )
 
-            # ✅ SAVE TO DASHBOARD HISTORY
+            # ✅ GET SCORE AGAIN
+            score = maturity_score(st.session_state.style_profile)
+
+            # ✅ SAVE HISTORY
             new_entry = {
                 "input": prompt,
                 "personality": f"Personal vs {preset_style}",
+                "maturity_score": score,   # 🔥 IMPORTANT
                 "output": {
                     "preset": outputs["preset"],
                     "personal": outputs["personal"]
@@ -174,8 +216,6 @@ def show():
             }
 
             st.session_state.generation_history.append(new_entry)
-
-            # 🔥 SAVE TO FILE
             save_history(st.session_state.generation_history)
 
             col1, col2 = st.columns(2)
