@@ -10,6 +10,8 @@ from backend.profile_storage import save_style_profile
 import os
 import json
 
+from backend.voice_assistant import listen, speak, stop_speaking
+
 
 # ================= MATURITY FUNCTIONS =================
 def maturity_score(p):
@@ -63,6 +65,9 @@ def show():
 
     if "generation_history" not in st.session_state:
         st.session_state.generation_history = load_history()
+
+    if "prompt_text" not in st.session_state:
+        st.session_state.prompt_text = "Write a thank-you email to my professor."
 
     # ---------------- HEADER ----------------
     st.markdown("""
@@ -128,11 +133,9 @@ def show():
     if st.session_state.style_profile:
         profile = st.session_state.style_profile
 
-        # ✅ CALCULATE SCORE
         score = maturity_score(profile)
         profile["maturity_score"] = score
 
-        # ===== SHOW SCORE =====
         st.markdown("### 🧬 Writing Maturity Score")
 
         col_a, col_b = st.columns([1, 2])
@@ -143,7 +146,6 @@ def show():
         with col_b:
             st.info(maturity_feedback(score))
 
-        # ===== METRICS =====
         col1, col2, col3 = st.columns(3)
         col1.metric("Avg Sentence Length", profile["avg_sentence_length"])
         col2.metric("Vocabulary Richness", profile["vocabulary_richness"])
@@ -171,14 +173,34 @@ def show():
     st.markdown("</div>", unsafe_allow_html=True)
 
     # ==========================================================
-    # ✍️ GENERATE SIDE-BY-SIDE CARD
+    # ✍️ GENERATE CARD
     # ==========================================================
     st.markdown('<div class="figma-card generate-card">', unsafe_allow_html=True)
     st.markdown("<h3>✍️ Generate Text (Side-by-Side)</h3>", unsafe_allow_html=True)
 
+    # ✅ VOICE INPUT (BEFORE TEXT AREA)
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("🎤 Speak Prompt", use_container_width=True):
+            voice_input = listen()
+
+            if voice_input:
+                st.session_state.prompt_text = str(voice_input)
+                st.success(f"🎙 You said: {voice_input}")
+                st.rerun()
+            else:
+                st.error("Voice not detected")
+
+    with col2:
+        if st.button("⛔ Stop Voice", use_container_width=True):
+            stop_speaking()
+            st.warning("Voice stopped")
+
+    # ✅ TEXT AREA AFTER VOICE UPDATE
     prompt = st.text_area(
         "Enter your prompt",
-        "Write a thank-you email to my professor.",
+        key="prompt_text",
         height=140
     )
 
@@ -187,6 +209,7 @@ def show():
         ["casual", "academic", "professional"]
     )
 
+    # ===== GENERATE =====
     if st.button("⚡ Generate Side-by-Side", use_container_width=True):
         if not st.session_state.style_profile:
             st.warning("Please analyze your writing style first.")
@@ -200,14 +223,12 @@ def show():
                     style_profile=st.session_state.style_profile
                 )
 
-            # ✅ GET SCORE AGAIN
             score = maturity_score(st.session_state.style_profile)
 
-            # ✅ SAVE HISTORY
             new_entry = {
                 "input": prompt,
                 "personality": f"Personal vs {preset_style}",
-                "maturity_score": score,   # 🔥 IMPORTANT
+                "maturity_score": score,
                 "output": {
                     "preset": outputs["preset"],
                     "personal": outputs["personal"]
@@ -227,6 +248,9 @@ def show():
             with col2:
                 st.markdown("### 👤 Your Writing Style")
                 st.success(outputs["personal"])
+
+                # 🔊 SPEAK OUTPUT
+                speak(outputs["personal"])
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("<div class='page-footer'>✨ Powered by PersonaWrite AI ✨</div>", unsafe_allow_html=True)
