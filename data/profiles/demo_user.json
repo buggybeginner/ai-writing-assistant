@@ -1,20 +1,20 @@
 {
-    "avg_sentence_length": 20.69,
-    "vocabulary_richness": 0.671,
-    "formality_score": 0.6,
+    "avg_sentence_length": 28.86,
+    "vocabulary_richness": 0.641,
+    "formality_score": 0.5,
     "common_words": {
-        "and": 13,
-        "ai": 12,
-        "in": 6,
+        "and": 12,
+        "ai": 10,
+        "writing": 7,
+        "of": 6,
+        "data": 6,
         "engineering": 5,
+        "time": 5,
         "to": 5,
-        "python": 4,
-        "of": 4,
-        "data": 4,
-        "with": 3,
-        "generative": 3
+        "the": 5,
+        "management": 4
     },
     "personality": "Professional",
-    "sentence_count": 16,
-    "word_count": 331
+    "sentence_count": 14,
+    "word_count": 404
 }

@@ -1,12 +1,12 @@
 import subprocess
 from utils.text_cleaner import sanitize_text
 
-# Always use full model tag
+# ===================== MODEL =====================
+# You can upgrade to "mistral:latest" for better quality
 OLLAMA_MODEL = "tinyllama:latest"
 
 
-
-
+# ===================== OLLAMA CALL =====================
 def _call_ollama(prompt: str) -> str:
     """
     Calls Ollama locally and returns generated text
@@ -32,6 +32,42 @@ def _call_ollama(prompt: str) -> str:
         return f"⚠️ Unexpected error: {e}"
 
 
+# ===================== STYLE BUILDER =====================
+def build_style_description(style_profile: dict) -> str:
+    """
+    Converts numeric style metrics into natural language instructions
+    """
+    avg_len = style_profile.get("avg_sentence_length", 12)
+    vocab = style_profile.get("vocabulary_richness", 0.5)
+    formality = style_profile.get("formality_score", 0.5)
+
+    # Sentence style
+    if avg_len > 20:
+        sentence_style = "long and descriptive sentences"
+    elif avg_len > 12:
+        sentence_style = "moderately detailed sentences"
+    else:
+        sentence_style = "short and simple sentences"
+
+    # Vocabulary style
+    if vocab > 0.7:
+        vocab_style = "rich and expressive vocabulary"
+    elif vocab > 0.4:
+        vocab_style = "balanced vocabulary"
+    else:
+        vocab_style = "simple vocabulary"
+
+    # Tone
+    if formality > 0.7:
+        tone = "formal and professional tone"
+    elif formality > 0.4:
+        tone = "neutral tone"
+    else:
+        tone = "casual and friendly tone"
+
+    return f"Write in a {tone}, using {sentence_style} and {vocab_style}."
+
+
 # ===================== PRESET GENERATION =====================
 def generate_preset(prompt: str, preset: str) -> str:
     preset_styles = {
@@ -45,12 +81,15 @@ def generate_preset(prompt: str, preset: str) -> str:
     full_prompt = f"""
 You are a writing assistant.
 
-{style_instruction}
-
 Task:
 {prompt}
 
-Write the full response. Do NOT explain your style.
+Instructions:
+{style_instruction}
+
+Write the final response only.
+Do NOT explain anything.
+Do NOT mention style or instructions.
 """
 
     return _call_ollama(sanitize_text(full_prompt))
@@ -58,28 +97,20 @@ Write the full response. Do NOT explain your style.
 
 # ===================== PERSONAL STYLE GENERATION =====================
 def generate_with_style(prompt: str, style_profile: dict) -> str:
-    avg_len = style_profile.get("avg_sentence_length", 12)
-    vocab = style_profile.get("vocabulary_richness", 0.5)
-    formality = style_profile.get("formality_score", 0.5)
-
-    style_description = f"""
-The user’s writing style has:
-- Average sentence length: {avg_len}
-- Vocabulary richness: {vocab}
-- Formality score: {formality}
-
-Mimic this style closely.
-"""
+    style_description = build_style_description(style_profile)
 
     full_prompt = f"""
-You are an AI that writes exactly like the user.
-
-{style_description}
+You are a writing assistant.
 
 Task:
 {prompt}
 
-Write naturally. Do NOT mention analysis or metrics.
+Instructions:
+{style_description}
+
+Write the final response only.
+Do NOT explain anything.
+Do NOT mention style, analysis, or metrics.
 """
 
     return _call_ollama(sanitize_text(full_prompt))
