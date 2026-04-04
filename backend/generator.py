@@ -1,4 +1,5 @@
 import subprocess
+from utils.text_cleaner import sanitize_text
 
 # Always use full model tag
 OLLAMA_MODEL = "tinyllama:latest"
@@ -20,7 +21,7 @@ def _call_ollama(prompt: str) -> str:
         )
 
         if result.stdout:
-            return result.stdout.strip()
+            return sanitize_text(result.stdout.strip())
         else:
             return "⚠️ No output received from Ollama."
 
@@ -52,7 +53,7 @@ Task:
 Write the full response. Do NOT explain your style.
 """
 
-    return _call_ollama(full_prompt)
+    return _call_ollama(sanitize_text(full_prompt))
 
 
 # ===================== PERSONAL STYLE GENERATION =====================
@@ -81,7 +82,7 @@ Task:
 Write naturally. Do NOT mention analysis or metrics.
 """
 
-    return _call_ollama(full_prompt)
+    return _call_ollama(sanitize_text(full_prompt))
 
 
 # ===================== SIDE-BY-SIDE =====================

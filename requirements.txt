@@ -42,3 +42,12 @@ typing-inspection==0.4.2
 pytest==7.4.0
 black==23.9.0
 flake8==6.1.0
+
+# ===============================
+# Voice Features (Whisper STT + gTTS TTS)
+# ===============================
+openai-whisper
+sounddevice
+scipy
+numpy
+gTTS

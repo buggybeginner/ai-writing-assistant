@@ -6,11 +6,11 @@ from backend.document_processor import DocumentProcessor
 from backend.style_analyzer import StyleAnalyzer
 from backend.generator import generate_side_by_side
 from backend.profile_storage import save_style_profile
+from backend.voice_assistant import listen_speech, clean_text
+from utils.text_cleaner import sanitize_text
 
 import os
 import json
-
-from backend.voice_assistant import listen, speak, stop_speaking
 
 
 # ================= MATURITY FUNCTIONS =================
@@ -49,25 +49,31 @@ def save_history(history):
         json.dump(history, f, indent=4, default=str)
 
 
+# ================= SESSION STATE INIT =================
+def _init_session_state():
+    """Initialize all session state keys with defaults (runs once)."""
+    defaults = {
+        "uploaded_texts": [],
+        "style_profile": None,
+        "generation_history": load_history(),
+        "prompt": "Write a thank-you email to my professor.",
+        "generated_outputs": None,         # {"preset": ..., "personal": ...}
+        "selected_style": "casual",
+        "voice_status": None,              # None | "success" | "error"
+        "voice_message": "",
+    }
+    for key, default in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = default
+
+
 # ================= MAIN =================
 def show():
-    username = "demo_user"
+    _init_session_state()
 
+    username = "demo_user"
     processor = DocumentProcessor()
     analyzer = StyleAnalyzer()
-
-    # ---------------- SESSION STATE ----------------
-    if "uploaded_texts" not in st.session_state:
-        st.session_state.uploaded_texts = []
-
-    if "style_profile" not in st.session_state:
-        st.session_state.style_profile = None
-
-    if "generation_history" not in st.session_state:
-        st.session_state.generation_history = load_history()
-
-    if "prompt_text" not in st.session_state:
-        st.session_state.prompt_text = "Write a thank-you email to my professor."
 
     # ---------------- HEADER ----------------
     st.markdown("""
@@ -178,79 +184,100 @@ def show():
     st.markdown('<div class="figma-card generate-card">', unsafe_allow_html=True)
     st.markdown("<h3>✍️ Generate Text (Side-by-Side)</h3>", unsafe_allow_html=True)
 
-    # ✅ VOICE INPUT (BEFORE TEXT AREA)
-    col1, col2 = st.columns(2)
+    # ---------- VOICE INPUT ----------
+    if st.button("🎤 Speak Prompt", use_container_width=True):
+        with st.spinner("🎤 Recording… speak now (8 seconds)"):
+            voice_text = listen_speech(duration=8)
 
-    with col1:
-        if st.button("🎤 Speak Prompt", use_container_width=True):
-            voice_input = listen()
+        if voice_text:
+            st.session_state.prompt = voice_text
+            st.session_state.voice_status = "success"
+            st.rerun()  # Rerun so text_area renders with new value
+        else:
+            st.session_state.voice_status = "error"
 
-            if voice_input:
-                st.session_state.prompt_text = str(voice_input)
-                st.success(f"🎙 You said: {voice_input}")
-                st.rerun()
-            else:
-                st.error("Voice not detected")
+    # Show voice error only (success is visible in the textbox itself)
+    if st.session_state.voice_status == "error":
+        st.warning("Could not understand speech. Please try again or type your prompt below.")
 
-    with col2:
-        if st.button("⛔ Stop Voice", use_container_width=True):
-            stop_speaking()
-            st.warning("Voice stopped")
-
-    # ✅ TEXT AREA AFTER VOICE UPDATE
+    # ---------- PROMPT TEXT AREA (single source of truth) ----------
+    # key="prompt" binds directly to st.session_state["prompt"]
+    # Voice input updates this key, so textbox always reflects voice input
     prompt = st.text_area(
-        "Enter your prompt",
-        key="prompt_text",
-        height=140
+        "✍️ Enter your prompt (or use voice above)",
+        height=140,
+        key="prompt",
     )
 
+    # ---------- PRESET SELECTOR ----------
     preset_style = st.selectbox(
         "Choose preset personality",
-        ["casual", "academic", "professional"]
+        ["casual", "academic", "professional"],
+        index=["casual", "academic", "professional"].index(
+            st.session_state.selected_style
+        ),
+        key="preset_selector",
     )
+    st.session_state.selected_style = preset_style
 
-    # ===== GENERATE =====
+    # ---------- GENERATE BUTTON ----------
     if st.button("⚡ Generate Side-by-Side", use_container_width=True):
         if not st.session_state.style_profile:
             st.warning("Please analyze your writing style first.")
-        elif not prompt.strip():
+        elif not st.session_state.get("prompt", "").strip():
             st.warning("Please enter a prompt.")
         else:
-            with st.spinner("Generating comparison..."):
+            # Clean the prompt before generation (voice cleaner + ANSI stripper)
+            cleaned_prompt = sanitize_text(clean_text(st.session_state["prompt"].strip()))
+
+            with st.spinner("Generating comparison…"):
                 outputs = generate_side_by_side(
-                    prompt=prompt,
+                    prompt=cleaned_prompt,
                     preset=preset_style,
-                    style_profile=st.session_state.style_profile
+                    style_profile=st.session_state.style_profile,
                 )
 
-            score = maturity_score(st.session_state.style_profile)
+            # Persist outputs in session state
+            st.session_state.generated_outputs = outputs
 
+            # Clear previous TTS audio (new generation = new audio needed)
+            st.session_state.tts_audio_preset = None
+            st.session_state.tts_audio_personal = None
+
+            # Clear voice status so old messages don't linger
+            st.session_state.voice_status = None
+            st.session_state.voice_message = ""
+
+            # Save to history
+            score = maturity_score(st.session_state.style_profile)
             new_entry = {
-                "input": prompt,
+                "input": cleaned_prompt,
                 "personality": f"Personal vs {preset_style}",
                 "maturity_score": score,
                 "output": {
                     "preset": outputs["preset"],
-                    "personal": outputs["personal"]
+                    "personal": outputs["personal"],
                 },
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
-
             st.session_state.generation_history.append(new_entry)
             save_history(st.session_state.generation_history)
 
-            col1, col2 = st.columns(2)
+    # ==========================================================
+    # 📊 DISPLAY OUTPUTS (always rendered from session state)
+    # ==========================================================
+    if st.session_state.generated_outputs:
+        outputs = st.session_state.generated_outputs
 
-            with col1:
-                st.markdown("### 🎭 Preset Personality")
-                st.success(outputs["preset"])
+        col1, col2 = st.columns(2)
 
-            with col2:
-                st.markdown("### 👤 Your Writing Style")
-                st.success(outputs["personal"])
+        with col1:
+            st.markdown("### 🎭 Preset Personality")
+            st.success(outputs["preset"])
 
-                # 🔊 SPEAK OUTPUT
-                speak(outputs["personal"])
+        with col2:
+            st.markdown("### 👤 Your Writing Style")
+            st.success(outputs["personal"])
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("<div class='page-footer'>✨ Powered by PersonaWrite AI ✨</div>", unsafe_allow_html=True)
