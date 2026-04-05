@@ -51,3 +51,8 @@ sounddevice
 scipy
 numpy
 gTTS
+
+# ===============================
+# LLM API (Groq)
+# ===============================
+groq

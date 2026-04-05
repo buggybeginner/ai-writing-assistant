@@ -1,20 +1,20 @@
 {
-    "avg_sentence_length": 28.86,
-    "vocabulary_richness": 0.641,
-    "formality_score": 0.5,
+    "avg_sentence_length": 18.33,
+    "vocabulary_richness": 0.553,
+    "formality_score": 0.6,
     "common_words": {
-        "and": 12,
-        "ai": 10,
-        "writing": 7,
-        "of": 6,
-        "data": 6,
-        "engineering": 5,
-        "time": 5,
-        "to": 5,
-        "the": 5,
-        "management": 4
+        "and": 13,
+        "my": 11,
+        "the": 10,
+        "you": 10,
+        "for": 9,
+        "to": 7,
+        "with": 7,
+        "in": 7,
+        "on": 7,
+        "birthday": 5
     },
     "personality": "Professional",
-    "sentence_count": 14,
-    "word_count": 404
+    "sentence_count": 21,
+    "word_count": 385
 }

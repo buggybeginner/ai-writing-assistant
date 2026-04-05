@@ -6,7 +6,7 @@ from backend.document_processor import DocumentProcessor
 from backend.style_analyzer import StyleAnalyzer
 from backend.generator import generate_side_by_side
 from backend.profile_storage import save_style_profile
-from backend.voice_assistant import listen_speech, clean_text
+from backend.voice_assistant import get_recorder, transcribe, clean_text
 from utils.text_cleaner import sanitize_text
 
 import os
@@ -61,6 +61,10 @@ def _init_session_state():
         "selected_style": "casual",
         "voice_status": None,              # None | "success" | "error"
         "voice_message": "",
+        # ---- voice recording (start/stop) ----
+        "recording": False,
+        "audio_ready": False,
+        "recorded_audio": None,            # numpy array after stop
     }
     for key, default in defaults.items():
         if key not in st.session_state:
@@ -184,25 +188,98 @@ def show():
     st.markdown('<div class="figma-card generate-card">', unsafe_allow_html=True)
     st.markdown("<h3>✍️ Generate Text (Side-by-Side)</h3>", unsafe_allow_html=True)
 
-    # ---------- VOICE INPUT ----------
-    if st.button("🎤 Speak Prompt", use_container_width=True):
-        with st.spinner("🎤 Recording… speak now (8 seconds)"):
-            voice_text = listen_speech(duration=8)
+    # ---------- VOICE INPUT (START / STOP) ----------
+    recorder = get_recorder()
 
-        if voice_text:
-            st.session_state.prompt = voice_text
-            st.session_state.voice_status = "success"
-            st.rerun()  # Rerun so text_area renders with new value
-        else:
+    col_start, col_stop = st.columns(2)
+
+    with col_start:
+        start_clicked = st.button(
+            "🎤 Start Recording",
+            use_container_width=True,
+            disabled=st.session_state.recording,
+        )
+
+    with col_stop:
+        stop_clicked = st.button(
+            "⏹ Stop Recording",
+            use_container_width=True,
+            disabled=not st.session_state.recording,
+        )
+
+    # ---- Handle START ----
+    if start_clicked and not st.session_state.recording:
+        try:
+            recorder.start()
+            st.session_state.recording = True
+            st.session_state.audio_ready = False
+            st.session_state.recorded_audio = None
+            st.session_state.voice_status = None
+            st.session_state.voice_message = ""
+            st.rerun()
+        except Exception as e:
+            st.error(f"🎤 Microphone error: {e}")
+
+    # ---- Handle STOP ----
+    if stop_clicked and st.session_state.recording:
+        st.session_state.recording = False
+        try:
+            audio = recorder.stop()
+            if audio is not None and len(audio) > 0:
+                st.session_state.recorded_audio = audio
+                st.session_state.audio_ready = True
+            else:
+                st.session_state.voice_status = "error"
+                st.session_state.voice_message = "No audio detected."
+        except Exception as e:
             st.session_state.voice_status = "error"
+            st.session_state.voice_message = f"Recording error: {e}"
+        st.rerun()
 
-    # Show voice error only (success is visible in the textbox itself)
+    # ---- Status indicators ----
+    if st.session_state.recording:
+        st.markdown(
+            '<div style="display:flex;align-items:center;gap:8px;">'
+            '<span style="display:inline-block;width:12px;height:12px;'
+            'border-radius:50%;background:#ef4444;animation:pulse 1s infinite;"></span>'
+            '<span style="color:#ef4444;font-weight:600;">Recording… speak now</span>'
+            '</div>'
+            '<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>',
+            unsafe_allow_html=True,
+        )
+
+    # ---- Transcribe when audio is ready ----
+    if st.session_state.audio_ready and st.session_state.recorded_audio is not None:
+        with st.spinner("🔄 Processing audio…"):
+            try:
+                raw_text = transcribe(st.session_state.recorded_audio)
+                cleaned = clean_text(raw_text)
+
+                if cleaned:
+                    st.session_state.prompt = cleaned
+                    st.session_state.voice_status = "success"
+                else:
+                    st.session_state.voice_status = "error"
+                    st.session_state.voice_message = (
+                        "Could not understand speech. Please try again."
+                    )
+            except Exception as e:
+                st.session_state.voice_status = "error"
+                st.session_state.voice_message = f"Transcription error: {e}"
+
+        # Reset audio state
+        st.session_state.audio_ready = False
+        st.session_state.recorded_audio = None
+        st.rerun()
+
+    # Show voice feedback
     if st.session_state.voice_status == "error":
-        st.warning("Could not understand speech. Please try again or type your prompt below.")
+        msg = st.session_state.voice_message or (
+            "Could not understand speech. Please try again or type your prompt below."
+        )
+        st.warning(msg)
 
     # ---------- PROMPT TEXT AREA (single source of truth) ----------
-    # key="prompt" binds directly to st.session_state["prompt"]
-    # Voice input updates this key, so textbox always reflects voice input
     prompt = st.text_area(
         "✍️ Enter your prompt (or use voice above)",
         height=140,

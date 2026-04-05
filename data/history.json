@@ -292,5 +292,55 @@
             "personal": "Happy birthday to my mentor, who has been a true inspiration and guide for \nme throughout my career journey! As we celebrate this milestone in our live\nlives together, I wanted to take a moment to reflect on the incredible impa\nimpact he has had not only on me but also on countless individuals.\n\nThroughout his distinguished career in the field of software engineering, h\nhe has blazed a trail as an innovator, mentor, and inspiration for many. Hi\nHis unparalleled knowledge, experience, and wisdom have not only helped me \nto grow professionally but have also inspired me to do my best work every d\nday.\n\nI am humbled by the impact that he has had on my life and career, and I kno\nknow that he will continue to inspire me for many years to come. As we cele\ncelebrate this special occasion, let us all take a moment to reflect on his\nhis enduring legacy, and remember how fortunate we are to have such an incr\nincredible mentor in our lives.\n\nWith love and admiration,\nour Name]"
         },
         "timestamp": "2026-04-04T23:40:47.212769"
+    },
+    {
+        "input": "Repair our Happy Birthday message for my mother, who is going to turn 50 this year, wishing her a very good luck and a very nourishing and eventful life moving ahead.",
+        "personality": "Personal vs casual",
+        "maturity_score": 64.45,
+        "output": {
+            "preset": "Dear Happy Birther,\n\nIt's hard to believe you're already nearing your big 50! As you turn anothe\nanother year older, I want to take a moment to wish you all the luck and ha\nhappiness in the world for this special milestone. May your life be full of\nof unforgettable memories, exciting experiences, and an abundance of blessi\nblessings.\n\nTo make it even more meaningful, let's celebrate with a little party tonigh\ntonight! I have no doubt that you'll have fun dancing the night away with a\nall your loved ones, sipping on a few glasses of champagne, and toasting to\nto another amazing year in your life.\n\nAs for me, I'm happy to say I've been blessed with an eventful and fulfilli\nfulfilling career that has allowed me to witness the joys and sorrows of ma\nmany people throughout my life. But as we grow old together, let's always c\ncherish each other's company and enjoy every moment.\n\nAside from your usual happy birthday greetings, I hope you find a meaningfu\nmeaningful way to celebrate this milestone. Whatever your heart desires, pl\nplease feel free to let me know. I'm excited to see how your life unfolds i\nin the coming years and cherish every moment with you.\n\nWishing you all the best,\n\nour Name]\nour Signature]",
+            "personal": "In accordance with your request, I would be happy to repair your Happy Birt\nBirthday message for my mother. As a writing assistant, I understand that t\nthe tone is important in conveying emotions and sentiments, so let me provi\nprovide you with some guidelines:\n\n1. Keep it easy-to-read\n2. Use simple language\n3. Focus on your mom's age, not her name or occasion\n4. Consider the mood of the message\n5. Avoid overuse of adjectives and metaphors\n6. Follow a clear, logical flow\n7. Be positive and upbeat\n8. Leave space for humor or personal touches\n\nHere's a revised version that captures some of the essential elements:\n\nHappy Birthday to my amazing mother! As she turns 50 this year, I feel so f\nfortunate to have her in my life. May you have many more joyful and fulfill\nfulfilling years ahead. Let us celebrate together with love and laughter.\n\nMay all your dreams come true, and may you always enjoy the good times, the\nthe bad times, and everything in between! As you embark on this new chapter\nchapter in your life, I wish for you a bright future filled with love, comp\ncompassion, and wisdom. May your heart be full of kindness, joy, and peace.\npeace.\n\nAs we celebrate this special day together, let's also reflect on the many t\nthings that made us who we are today. May your childhood dreams come true, \nand may you never forget how far you have come. Let's cherish every moment \nspent with you, and take comfort in knowing that you are loved beyond measu\nmeasure.\n\nMay all of us, as a family, support and nurture each other in this journey \ncalled life. As we continue to grow and learn from one another, let's hold \nonto the memories that bring us together and look forward to many more unfo\nunforgettable moments.\n\nIn conclusion, I hope these words give you a sense of warmth, joy, and grat\ngratitude for your incredible mom. May all of us celebrate this day with he\nher in our hearts, and may we continue to create memories that will last a \nlifetime!"
+        },
+        "timestamp": "2026-04-05T11:10:47.166152"
+    },
+    {
+        "input": "Right, a birthday message for my mother.",
+        "personality": "Personal vs professional",
+        "maturity_score": 64.45,
+        "output": {
+            "preset": "\u26a0\ufe0f Groq API error: Error code: 400 - {'error': {'message': 'The model `llama3-70b-8192` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}",
+            "personal": "\u26a0\ufe0f Groq API error: Error code: 400 - {'error': {'message': 'The model `llama3-70b-8192` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}"
+        },
+        "timestamp": "2026-04-05T11:39:13.959990"
+    },
+    {
+        "input": "provide a letter for my friend who is living abroad asking for her health",
+        "personality": "Personal vs casual",
+        "maturity_score": 64.45,
+        "output": {
+            "preset": "\u26a0\ufe0f Groq API error: Error code: 400 - {'error': {'message': 'The model `llama3-8b-8192` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}",
+            "personal": "\u26a0\ufe0f Groq API error: Error code: 400 - {'error': {'message': 'The model `llama3-8b-8192` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}"
+        },
+        "timestamp": "2026-04-05T11:42:29.447835"
+    },
+    {
+        "input": "Prepare a letter for my friend who is living abroad asking about her health condition.",
+        "personality": "Personal vs casual",
+        "maturity_score": 64.45,
+        "output": {
+            "preset": "\u26a0\ufe0f Groq API error: Error code: 400 - {'error': {'message': 'The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}",
+            "personal": "\u26a0\ufe0f Groq API error: Error code: 400 - {'error': {'message': 'The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}"
+        },
+        "timestamp": "2026-04-05T11:47:34.094637"
+    },
+    {
+        "input": "Prepare our letter for my friend who lives abroad asking about her health condition.",
+        "personality": "Personal vs casual",
+        "maturity_score": 64.45,
+        "output": {
+            "preset": "Dear riend's Name],\n\nI was just thinking about you the other day and I couldn't help but wonder how you're doing. How's your health been lately? I know you've been dealing with some issues, and I'm sending you all my best wishes for a speedy recovery.\n\nHow's life in ountry/Location] treating you? I feel like it's been ages since we last caught up, and I'm really missing our chats. I hope you're taking care of yourself and not getting too overwhelmed with everything that's going on.\n\nI was thinking about our last conversation and I wanted to follow up on how your treatment is going. Have you seen any improvement, or are there any new developments that I should know about? I'm here for you, no matter what, and I want to make sure you know that.\n\nTake care of yourself, my friend. I hope to hear back from you soon and catch up on everything that's been going on in your life.\n\n Sending you lots of love and positive vibes,\nour Name]",
+            "personal": "Dear riend's Name],\n\nI hope this letter finds you in good health and spirits. I've been thinking about you a lot lately and wanted to reach out to see how you're doing. How's your health condition been since we last spoke? Are you still undergoing treatment or have you made any progress in managing your symptoms?\n\nI was also wondering if you've been able to take some time for yourself lately. Living abroad can be challenging, especially when dealing with a health issue. I want to make sure you're taking care of yourself and not feeling overwhelmed.\n\nIf you're willing to share, I'd love to hear about your experiences and any new developments in your health. I'm here to listen and offer any support I can from afar.\n\nTake care of yourself and know that you're not alone. I'm thinking of you and sending all my best wishes.\n\nWarm regards,\nour Name]"
+        },
+        "timestamp": "2026-04-05T11:53:12.326355"
     }
 ]
