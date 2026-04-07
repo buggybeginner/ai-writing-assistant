@@ -107,3 +107,6 @@ app_test.py
 # User-generated data (keep structure, ignore contents)
 data/user_profiles/*
 !data/user_profiles/.gitkeep
+
+# Runtime data
+data/history.json
