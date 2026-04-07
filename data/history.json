@@ -342,5 +342,15 @@
             "personal": "Dear riend's Name],\n\nI hope this letter finds you in good health and spirits. I've been thinking about you a lot lately and wanted to reach out to see how you're doing. How's your health condition been since we last spoke? Are you still undergoing treatment or have you made any progress in managing your symptoms?\n\nI was also wondering if you've been able to take some time for yourself lately. Living abroad can be challenging, especially when dealing with a health issue. I want to make sure you're taking care of yourself and not feeling overwhelmed.\n\nIf you're willing to share, I'd love to hear about your experiences and any new developments in your health. I'm here to listen and offer any support I can from afar.\n\nTake care of yourself and know that you're not alone. I'm thinking of you and sending all my best wishes.\n\nWarm regards,\nour Name]"
         },
         "timestamp": "2026-04-05T11:53:12.326355"
+    },
+    {
+        "input": "Write a happy birthday message to my mother who is turning 50 this year wishing her a very happy and healthy life moving forward.",
+        "personality": "Personal vs professional",
+        "maturity_score": 40.64,
+        "output": {
+            "preset": "Dear Mom,\n\nAs you celebrate this milestone birthday, I want to take a moment to express how grateful I am for the incredible woman you are and the love you've shown me throughout the years. Fifty years young is a remarkable achievement, and I hope you know that you're only getting better with time.\n\nAs you look back on all that you've accomplished, I hope you're proud of the strong, kind, and compassionate person you've become. And as you look ahead to the years to come, I wish you a lifetime of happiness, good health, and every opportunity to pursue your passions.\n\nYou are the rock that holds our family together, and I'm so grateful to have you in my life. Here's to many more years of love, laughter, and adventure together. Happy 50th birthday, Mom!",
+            "personal": "Happy 50th birthday to the most amazing mom in the world! Today marks a major milestone in your life, and I hope it's filled with love, laughter, and all your favorite things. Five decades of life have given you so much experience, wisdom, and character, but I know that the best is yet to come. As you celebrate this special day, I want you to know how grateful I am for the incredible woman you are and the incredible mom you've been to me. Here's to many more years of good health, happiness, and adventure - may all your dreams come true and your heart stay full of joy. I love you more than words can say."
+        },
+        "timestamp": "2026-04-07T15:36:26.944522"
     }
 ]

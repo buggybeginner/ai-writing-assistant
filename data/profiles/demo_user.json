@@ -1,20 +1,20 @@
 {
-    "avg_sentence_length": 18.33,
-    "vocabulary_richness": 0.553,
-    "formality_score": 0.6,
+    "avg_sentence_length": 13.68,
+    "vocabulary_richness": 0.474,
+    "formality_score": 0.2,
     "common_words": {
-        "and": 13,
-        "my": 11,
-        "the": 10,
-        "you": 10,
-        "for": 9,
-        "to": 7,
-        "with": 7,
-        "in": 7,
-        "on": 7,
-        "birthday": 5
+        "you": 21,
+        "and": 15,
+        "to": 10,
+        "your": 7,
+        "been": 7,
+        "about": 6,
+        "health": 6,
+        "how": 6,
+        "re": 6,
+        "of": 6
     },
-    "personality": "Professional",
-    "sentence_count": 21,
-    "word_count": 385
+    "personality": "Casual Friendly",
+    "sentence_count": 25,
+    "word_count": 342
 }
