@@ -1,12 +1,16 @@
 """
 PersonaWrite AI — Text Generator (Groq API)
-Improved Version: Cleaner Output + Better Prompting
+Improved Version: Cleaner Output + Better Prompting + RAG Context
 """
 
 import os
+import logging
+from typing import List
 from dotenv import load_dotenv
 from groq import Groq
 from utils.text_cleaner import sanitize_text
+
+logger = logging.getLogger(__name__)
 
 # ===================== ENV & CLIENT =====================
 
@@ -50,6 +54,29 @@ def clean_prompt(prompt: str) -> str:
     prompt = prompt.replace("professor's name", "Professor")
 
     return prompt.strip()
+
+
+# ===================== RAG CONTEXT HELPER =====================
+
+def _get_rag_context(prompt: str) -> str:
+    """
+    Attempt to retrieve relevant chunks from the RAG index.
+    Returns a formatted context block, or empty string on failure / no data.
+    """
+    try:
+        from backend.rag_engine import retrieve_relevant_chunks
+        chunks = retrieve_relevant_chunks(prompt, top_k=3)
+        if chunks:
+            joined = "\n---\n".join(chunks)
+            return (
+                "Use the following context from the user's own documents "
+                "to inform your writing. Stay faithful to any facts, names, "
+                "or details mentioned:\n\n"
+                f"{joined}\n\n"
+            )
+    except Exception as e:
+        logger.debug("RAG context unavailable: %s", e)
+    return ""
 
 
 # ===================== GROQ CALL =====================
@@ -158,6 +185,11 @@ def generate_preset(prompt: str, preset: str) -> str:
         "- No explanations.\n"
     )
 
+    # Inject RAG context if available
+    rag_ctx = _get_rag_context(prompt)
+    if rag_ctx:
+        system_prompt = rag_ctx + system_prompt
+
     return call_llm(system_prompt, prompt)
 
 
@@ -176,6 +208,11 @@ def generate_with_style(prompt: str, style_profile: dict) -> str:
         "- Keep structure clean and readable.\n"
         "- No explanations.\n"
     )
+
+    # Inject RAG context if available
+    rag_ctx = _get_rag_context(prompt)
+    if rag_ctx:
+        system_prompt = rag_ctx + system_prompt
 
     return call_llm(system_prompt, prompt)
 
