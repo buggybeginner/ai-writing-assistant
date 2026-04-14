@@ -1,20 +1,20 @@
 {
-    "avg_sentence_length": 13.68,
-    "vocabulary_richness": 0.474,
-    "formality_score": 0.2,
+    "avg_sentence_length": 15.09,
+    "vocabulary_richness": 0.709,
+    "formality_score": 0.636,
     "common_words": {
-        "you": 21,
-        "and": 15,
-        "to": 10,
-        "your": 7,
-        "been": 7,
-        "about": 6,
-        "health": 6,
-        "how": 6,
-        "re": 6,
-        "of": 6
+        "and": 17,
+        "in": 8,
+        "ai": 8,
+        "writing": 6,
+        "to": 5,
+        "with": 4,
+        "data": 4,
+        "text": 4,
+        "engineering": 3,
+        "learning": 3
     },
-    "personality": "Casual Friendly",
-    "sentence_count": 25,
-    "word_count": 342
+    "personality": "Professional",
+    "sentence_count": 23,
+    "word_count": 347
 }
