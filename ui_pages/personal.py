@@ -120,6 +120,14 @@ def show():
 
         st.success(f"✅ {len(st.session_state.uploaded_texts)} file(s) processed")
 
+        # Build RAG index from uploaded documents
+        try:
+            from backend.rag_engine import build_rag_index
+            if build_rag_index(st.session_state.uploaded_texts):
+                st.info("🔍 RAG knowledge base updated — context-aware generation enabled.")
+        except Exception:
+            pass  # RAG is optional; silently skip
+
     st.markdown("</div>", unsafe_allow_html=True)
 
     # ==========================================================
